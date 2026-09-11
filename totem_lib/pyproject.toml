@@ -3,7 +3,7 @@ requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "totem-lib"
+name = "totem-tool"
 version = "0.1.0"
 authors = [
   { name = "Lukas Liss", email = "liss@pads.rwth-aachen.de" },

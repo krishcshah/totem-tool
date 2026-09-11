@@ -133,7 +133,7 @@ export const LandingFooter: React.FC = () => {
             © {currentYear} Lukas Liss & contributors · RWTH Aachen University Chair of Process and Data Science (PADS)
           </div>
           <div>
-            Native OCEL 2.0 · DuckDB Core · React 19 · Python totem-lib
+            Native OCEL 2.0 · DuckDB Core · React 19 · Python totem-tool
           </div>
         </div>
       </div>

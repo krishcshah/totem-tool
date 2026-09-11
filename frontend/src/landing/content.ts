@@ -264,7 +264,7 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     question: "Can I run TOTeM locally?",
-    answer: "Yes. The repository includes an Electron desktop configuration that bundles the React frontend, Django REST API, totem-lib analysis library, and DuckDB storage locally without requiring external cloud services.",
+    answer: "Yes. The repository includes an Electron desktop configuration that bundles the React frontend, Django REST API, totem-tool analysis library, and DuckDB storage locally without requiring external cloud services.",
   },
   {
     question: "Can I query the event data directly?",
@@ -272,10 +272,10 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     question: "Is TOTeM open source?",
-    answer: "Yes. The complete TOTeM Tool workbench and the underlying totem-lib analysis core are published under the permissive MIT License on GitHub.",
+    answer: "Yes. The complete TOTeM Tool workbench and the underlying totem-tool analysis core are published under the permissive MIT License on GitHub.",
   },
   {
     question: "Can I use the analysis library without the interface?",
-    answer: "Yes. The core algorithms are packaged in a standalone Python library called totem-lib. You can install it directly with 'pip install totem-lib' and use it in Python scripts, Jupyter notebooks, or data science pipelines without starting the web application.",
+    answer: "Yes. The core algorithms are packaged in a standalone Python library called totem-tool on PyPI. You can install it directly with 'pip install totem-tool' and use it in Python scripts, Jupyter notebooks, or data science pipelines without starting the web application.",
   },
 ];

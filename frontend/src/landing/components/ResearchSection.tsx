@@ -6,7 +6,7 @@ export const ResearchSection: React.FC = () => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText("pip install totem-lib");
+    navigator.clipboard.writeText("pip install totem-tool");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -97,7 +97,7 @@ export const ResearchSection: React.FC = () => {
               <div className="text-[10px] text-neutral-500 mt-1">Thin API & Sessions</div>
             </div>
             <div className="p-3 bg-white rounded border border-blue-300 shadow-2xs">
-              <div className="font-bold text-blue-600">totem-lib</div>
+              <div className="font-bold text-blue-600">totem-tool</div>
               <div className="text-[10px] text-blue-700 mt-1">Python Analysis Core</div>
             </div>
             <div className="p-3 bg-white rounded border border-[#E4E4E7] shadow-2xs">
@@ -121,16 +121,33 @@ export const ResearchSection: React.FC = () => {
               </h3>
             </div>
             <p className="text-xs sm:text-sm text-slate-400 font-sans leading-relaxed max-w-xl">
-              <code className="text-emerald-400 font-mono">totem-lib</code> has no web or UI
+              <code className="text-emerald-400 font-mono">totem-tool</code> has no web or UI
               dependencies. Import OCEL 2.0 logs, mine temporal relations, discover process areas,
-              and check conformance directly from Python.
+              and check conformance directly from Python. Available on{" "}
+              <a
+                href="https://pypi.org/project/totem-tool/"
+                target="_blank"
+                rel="noreferrer"
+                className="underline hover:text-white transition-colors"
+              >
+                PyPI
+              </a>
+              .
             </p>
           </div>
 
           {/* Terminal Command Snippet */}
           <div className="flex items-center gap-3 bg-[#161C26] border border-[#232B36] rounded-lg px-4 py-3 font-mono text-xs text-slate-200 shrink-0">
             <span className="text-slate-500 select-none">$</span>
-            <span className="text-emerald-400 font-semibold">pip install totem-lib</span>
+            <a
+              href="https://pypi.org/project/totem-tool/"
+              target="_blank"
+              rel="noreferrer"
+              className="text-emerald-400 font-semibold hover:underline"
+              title="View on PyPI"
+            >
+              pip install totem-tool
+            </a>
             <button
               type="button"
               onClick={handleCopy}
