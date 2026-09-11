@@ -268,3 +268,5 @@ backend/cache/*
 # ====================
 
 Claude_design
+.vercel
+.env*
