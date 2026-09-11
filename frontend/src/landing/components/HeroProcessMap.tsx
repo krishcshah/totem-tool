@@ -105,7 +105,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
       name: "Quality Check",
       timeLabel: "10:35:40",
       x: 450,
-      y: 260,
+      y: 248,
       involvedTypes: ["item", "resource"],
       description: "Inspection station checks item integrity",
     },
@@ -230,7 +230,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
         onMouseLeave={() => setIsHovered(false)}
       >
         <svg
-          viewBox="0 0 920 340"
+          viewBox="0 0 920 365"
           className="w-full h-auto select-none"
           role="img"
           aria-label="Interactive Object-Centric Event Map connecting Order, Item, Package, and Resource threads across discrete events"
@@ -254,7 +254,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
           </defs>
 
           {/* Background grid */}
-          <rect width="920" height="340" fill="url(#hero-grid)" rx="8" />
+          <rect width="920" height="365" fill="url(#hero-grid)" rx="8" />
 
           {/* Timeline axis along top */}
           <line x1="60" y1="45" x2="860" y2="45" stroke="#CBD5E1" strokeWidth="1.5" strokeDasharray="4 4" />
@@ -281,9 +281,9 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
           />
 
           {/* 2. Item Thread (Violet) */}
-          {/* Path: starts at e2 (270, 190) -> e3 (450, 260) -> e4 (630, 190) */}
+          {/* Path: starts at e2 (270, 190) -> e3 (450, 248) -> e4 (630, 190) */}
           <path
-            d="M 230 190 L 270 190 C 350 190, 370 260, 450 260 C 530 260, 550 190, 630 190 L 680 190"
+            d="M 230 190 L 270 190 C 350 190, 370 248, 450 248 C 530 248, 550 190, 630 190 L 680 190"
             fill="none"
             stroke="#8B5CF6"
             strokeWidth={getThreadStrokeWidth("item")}
@@ -309,7 +309,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
           {/* 4. Resource Thread (Amber) */}
           {/* A shared worker/machine thread that touches e2, e3, e4 and extends outward to other executions */}
           <path
-            d="M 60 300 C 180 300, 200 190, 270 190 C 340 190, 380 260, 450 260 C 520 260, 560 190, 630 190 C 700 190, 750 300, 880 300"
+            d="M 60 300 C 180 300, 200 190, 270 190 C 340 190, 380 248, 450 248 C 520 248, 560 190, 630 190 C 700 190, 750 300, 880 300"
             fill="none"
             stroke="#D97706"
             strokeWidth={getThreadStrokeWidth("resource")}
@@ -399,25 +399,31 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
           })}
 
           {/* Resource callout annotation */}
-          <g transform="translate(450, 305)" opacity={effectiveType === "resource" ? 1 : 0.75}>
+          <g
+            transform="translate(450, 318)"
+            opacity={effectiveType === "resource" ? 1 : effectiveType ? 0.25 : 0.85}
+            className="transition-opacity duration-300 pointer-events-none"
+          >
             <rect
-              x="-110"
-              y="-12"
-              width="220"
-              height="24"
-              rx="12"
+              x="-150"
+              y="-13"
+              width="300"
+              height="26"
+              rx="13"
               fill="#FEF3C7"
               stroke="#D97706"
-              strokeWidth="1"
+              strokeWidth="1.2"
             />
+            <circle cx="-134" cy="0" r="3.5" fill="#D97706" />
             <text
-              x="0"
-              y="4"
+              x="6"
+              y="3.5"
               textAnchor="middle"
               fill="#92400E"
               fontSize="9.5"
-              fontFamily="JetBrains Mono"
+              fontFamily="JetBrains Mono, monospace"
               fontWeight="500"
+              letterSpacing="0.01em"
             >
               Resource W-14 touches multiple executions
             </text>

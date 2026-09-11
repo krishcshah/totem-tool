@@ -3,7 +3,6 @@ import { WORKFLOW_STAGES } from "../content";
 import { ProductWindow } from "./ProductWindow";
 
 // Authentic preview assets from repository
-import logStatsImg from "@/images/log-statistics-preview.png";
 import variantsImg from "@/images/variants-preview.png";
 import ocdfgImg from "@/images/ocdfg-preview.png";
 
@@ -162,15 +161,86 @@ export const WorkflowStory: React.FC = () => {
           <div className="lg:col-span-7 h-[420px] sm:h-[460px] flex flex-col">
             <div key={activeStageIndex} className="tab-content-enter h-full">
               {activeStageIndex === 0 && (
-                /* 01 Import: Authentic Log Statistics Screenshot & DuckDB Target */
+                /* 01 Import: Authentic Ingestion & Schema Inspector */
                 <ProductWindow
                   title="Event Log Import & Validation"
-                  viewLabel="DuckDB Engine"
+                  viewLabel="DuckDB Columnar Ingestion"
                   viewportClassName="h-[320px] sm:h-[360px]"
                   caption="Incoming OCEL 2.0 formats (.sqlite, .json, .xml, .csv) are validated and converted into high-performance columnar DuckDB storage."
-                  imageSrc={logStatsImg}
-                  imageAlt="TOTeM Log Statistics preview showing events, objects, and timestamps"
-                />
+                >
+                  <div className="h-full p-4 sm:p-5 bg-white flex flex-col justify-between font-mono">
+                    {/* File ingestion status */}
+                    <div className="flex items-center justify-between pb-3 border-b border-neutral-200 text-xs">
+                      <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                        <span className="font-bold text-neutral-800">order_lifecycle.jsonocel</span>
+                        <span className="text-neutral-400 text-[11px]">(4.8 MB)</span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-semibold">
+                        ✓ Schema Validated
+                      </span>
+                    </div>
+
+                    {/* Columnar preview table */}
+                    <div className="my-2 flex-1 overflow-hidden border border-neutral-200 rounded text-[11px]">
+                      <table className="w-full text-left border-collapse">
+                        <thead>
+                          <tr className="bg-neutral-50 text-neutral-600 border-b border-neutral-200">
+                            <th className="py-1.5 px-2.5 font-semibold">event_id</th>
+                            <th className="py-1.5 px-2.5 font-semibold">activity</th>
+                            <th className="py-1.5 px-2.5 font-semibold">time</th>
+                            <th className="py-1.5 px-2.5 font-semibold">order_id</th>
+                            <th className="py-1.5 px-2.5 font-semibold">items</th>
+                            <th className="py-1.5 px-2.5 font-semibold">resource</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-neutral-100 text-neutral-700">
+                          <tr className="hover:bg-neutral-50/60">
+                            <td className="py-1.5 px-2.5 text-blue-600 font-semibold">evt_001</td>
+                            <td className="py-1.5 px-2.5">Create Order</td>
+                            <td className="py-1.5 px-2.5 text-neutral-400">10:14:02</td>
+                            <td className="py-1.5 px-2.5 font-semibold text-blue-700">ord_8491</td>
+                            <td className="py-1.5 px-2.5 text-purple-700">[i_01, i_02]</td>
+                            <td className="py-1.5 px-2.5 text-neutral-400">—</td>
+                          </tr>
+                          <tr className="hover:bg-neutral-50/60">
+                            <td className="py-1.5 px-2.5 text-blue-600 font-semibold">evt_002</td>
+                            <td className="py-1.5 px-2.5">Pick Items</td>
+                            <td className="py-1.5 px-2.5 text-neutral-400">10:22:15</td>
+                            <td className="py-1.5 px-2.5 font-semibold text-blue-700">ord_8491</td>
+                            <td className="py-1.5 px-2.5 text-purple-700">[i_01, i_02]</td>
+                            <td className="py-1.5 px-2.5 text-amber-700 font-semibold">W-14</td>
+                          </tr>
+                          <tr className="hover:bg-neutral-50/60">
+                            <td className="py-1.5 px-2.5 text-blue-600 font-semibold">evt_003</td>
+                            <td className="py-1.5 px-2.5">Quality Check</td>
+                            <td className="py-1.5 px-2.5 text-neutral-400">10:35:40</td>
+                            <td className="py-1.5 px-2.5 text-neutral-400">—</td>
+                            <td className="py-1.5 px-2.5 text-purple-700">[i_01, i_02]</td>
+                            <td className="py-1.5 px-2.5 text-amber-700 font-semibold">W-14</td>
+                          </tr>
+                          <tr className="hover:bg-neutral-50/60">
+                            <td className="py-1.5 px-2.5 text-blue-600 font-semibold">evt_004</td>
+                            <td className="py-1.5 px-2.5">Pack & Label</td>
+                            <td className="py-1.5 px-2.5 text-neutral-400">10:48:10</td>
+                            <td className="py-1.5 px-2.5 font-semibold text-blue-700">ord_8491</td>
+                            <td className="py-1.5 px-2.5 text-purple-700">[i_01, i_02]</td>
+                            <td className="py-1.5 px-2.5 text-teal-700 font-semibold">pkg_99</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* DuckDB Ingestion metric */}
+                    <div className="pt-2 border-t border-neutral-100 flex items-center justify-between text-[11px] text-neutral-500">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-blue-600" />
+                        <span>duckdb://embedded_tables</span>
+                      </div>
+                      <span className="text-emerald-700 font-semibold">42,190 events ingested in 84ms</span>
+                    </div>
+                  </div>
+                </ProductWindow>
               )}
 
               {activeStageIndex === 1 && (
