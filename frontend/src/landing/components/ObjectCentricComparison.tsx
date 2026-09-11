@@ -101,67 +101,67 @@ export const ObjectCentricComparison: React.FC = () => {
             </div>
           </div>
 
-          {/* Graphical Demonstration Surface — Fixed height containers to prevent vertical shift */}
+          {/* Graphical Demonstration Surface — Fixed height containers on desktop, flexible on mobile */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-8">
             {/* Left/Main Visual Diagram: Fixed 340px height */}
-            <div className="lg:col-span-8 bg-white rounded-xl border border-[#E4E4E7] p-6 shadow-2xs overflow-hidden h-[340px] flex items-center justify-center">
+            <div className="lg:col-span-8 bg-white rounded-xl border border-[#E4E4E7] p-3 sm:p-6 shadow-2xs overflow-hidden h-[340px] flex items-center justify-center">
               <div key={viewMode} className="w-full h-full flex items-center justify-center tab-content-enter">
                 {viewMode === "flattened" ? (
                   /* Flattened View: Single artificial lane, duplicated events, merged worker confusion */
                   <div className="w-full flex flex-col items-center">
                     <div className="w-full max-w-lg">
                       {/* Single Forced Case Lane */}
-                      <div className="relative border-2 border-dashed border-red-300 rounded-lg p-4 bg-red-50/40">
-                        <div className="flex items-center justify-between text-xs font-mono text-red-700 font-semibold mb-3">
+                      <div className="relative border-2 border-dashed border-red-300 rounded-lg p-3 sm:p-4 bg-red-50/40">
+                        <div className="flex items-center justify-between text-[11px] sm:text-xs font-mono text-red-700 font-semibold mb-2 sm:mb-3">
                           <span className="flex items-center gap-1.5">
-                            <AlertCircle className="w-4 h-4 text-red-500" />
+                            <AlertCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-500 shrink-0" />
                             Forced Case ID: #Order-8491
                           </span>
-                          <span className="text-[11px] bg-red-100 px-2 py-0.5 rounded text-red-800">
+                          <span className="text-[10px] sm:text-[11px] bg-red-100 px-1.5 sm:px-2 py-0.5 rounded text-red-800 shrink-0">
                             Items & Package swallowed
                           </span>
                         </div>
 
                         {/* Overlapping sequential line with duplicates */}
-                        <div className="flex items-center justify-between gap-2 overflow-x-auto py-2">
+                        <div className="flex items-center justify-between gap-1.5 sm:gap-2 overflow-x-auto no-scrollbar py-2">
                           <div className="flex flex-col items-center shrink-0">
-                            <div className="w-24 px-2 py-2 text-center rounded bg-white border border-red-300 shadow-xs text-xs font-medium">
+                            <div className="w-20 sm:w-24 px-1.5 sm:px-2 py-1.5 sm:py-2 text-center rounded bg-white border border-red-300 shadow-xs text-[11px] sm:text-xs font-medium">
                               Create Order
                             </div>
-                            <span className="text-[10px] font-mono text-neutral-400 mt-1">1x</span>
+                            <span className="text-[9px] sm:text-[10px] font-mono text-neutral-400 mt-1">1x</span>
                           </div>
-                          <ArrowRight className="w-4 h-4 text-red-400 shrink-0" />
+                          <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-400 shrink-0" />
                           <div className="flex flex-col items-center shrink-0">
-                            <div className="w-24 px-2 py-2 text-center rounded bg-white border border-red-300 shadow-xs text-xs font-medium">
+                            <div className="w-20 sm:w-24 px-1.5 sm:px-2 py-1.5 sm:py-2 text-center rounded bg-white border border-red-300 shadow-xs text-[11px] sm:text-xs font-medium">
                               Pick Item (1)
                             </div>
-                            <span className="text-[10px] font-mono text-red-500 font-semibold mt-1">
+                            <span className="text-[9px] sm:text-[10px] font-mono text-red-500 font-semibold mt-1">
                               duplicated
                             </span>
                           </div>
-                          <ArrowRight className="w-4 h-4 text-red-400 shrink-0" />
+                          <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-400 shrink-0" />
                           <div className="flex flex-col items-center shrink-0">
-                            <div className="w-24 px-2 py-2 text-center rounded bg-white border border-red-300 shadow-xs text-xs font-medium">
+                            <div className="w-20 sm:w-24 px-1.5 sm:px-2 py-1.5 sm:py-2 text-center rounded bg-white border border-red-300 shadow-xs text-[11px] sm:text-xs font-medium">
                               Pick Item (2)
                             </div>
-                            <span className="text-[10px] font-mono text-red-500 font-semibold mt-1">
+                            <span className="text-[9px] sm:text-[10px] font-mono text-red-500 font-semibold mt-1">
                               duplicated
                             </span>
                           </div>
-                          <ArrowRight className="w-4 h-4 text-red-400 shrink-0" />
+                          <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-400 shrink-0" />
                           <div className="flex flex-col items-center shrink-0">
-                            <div className="w-24 px-2 py-2 text-center rounded bg-white border border-red-300 shadow-xs text-xs font-medium">
+                            <div className="w-20 sm:w-24 px-1.5 sm:px-2 py-1.5 sm:py-2 text-center rounded bg-white border border-red-300 shadow-xs text-[11px] sm:text-xs font-medium">
                               Deliver
                             </div>
-                            <span className="text-[10px] font-mono text-neutral-400 mt-1">Order view</span>
+                            <span className="text-[9px] sm:text-[10px] font-mono text-neutral-400 mt-1">Order view</span>
                           </div>
                         </div>
 
                         {/* False connection to unrelated order through shared worker */}
-                        <div className="mt-4 pt-3 border-t border-red-200 flex items-center justify-between text-xs text-red-600 font-mono">
-                          <span>Worker W-14 shared across orders:</span>
-                          <span className="bg-red-200/70 text-red-900 px-2 py-0.5 rounded font-semibold text-[10px]">
-                            Unrelated orders artificially entangled
+                        <div className="mt-3 sm:mt-4 pt-2.5 sm:pt-3 border-t border-red-200 flex items-center justify-between text-[11px] sm:text-xs text-red-600 font-mono gap-1">
+                          <span className="truncate">Worker W-14 shared:</span>
+                          <span className="bg-red-200/70 text-red-900 px-1.5 sm:px-2 py-0.5 rounded font-semibold text-[9px] sm:text-[10px] shrink-0">
+                            Artificially entangled
                           </span>
                         </div>
                       </div>
@@ -169,64 +169,66 @@ export const ObjectCentricComparison: React.FC = () => {
                   </div>
                 ) : (
                   /* Object-Centric View: Preserved multi-object lifecycles */
-                  <div className="w-full flex flex-col gap-3">
-                    {/* Order lifecycle lane */}
-                    <div className="flex items-center gap-3 bg-blue-50/50 border border-blue-200 rounded-lg p-3">
-                      <span className="w-20 font-mono text-xs font-bold text-blue-700 shrink-0">
-                        Order:
-                      </span>
-                      <div className="flex items-center gap-2 flex-1 text-xs">
-                        <span className="px-2.5 py-1 bg-white border border-blue-300 rounded shadow-2xs font-medium">
-                          Create Order
+                  <div className="w-full overflow-x-auto no-scrollbar py-1">
+                    <div className="flex flex-col gap-2.5 sm:gap-3 min-w-[340px] sm:min-w-0">
+                      {/* Order lifecycle lane */}
+                      <div className="flex items-center gap-2 sm:gap-3 bg-blue-50/50 border border-blue-200 rounded-lg p-2 sm:p-3">
+                        <span className="w-14 sm:w-20 font-mono text-[11px] sm:text-xs font-bold text-blue-700 shrink-0">
+                          Order:
                         </span>
-                        <ArrowRight className="w-3.5 h-3.5 text-blue-400" />
-                        <span className="px-2.5 py-1 bg-white border border-blue-300 rounded shadow-2xs font-medium text-neutral-500">
-                          (awaits items)
-                        </span>
-                        <ArrowRight className="w-3.5 h-3.5 text-blue-400" />
-                        <span className="px-2.5 py-1 bg-white border border-blue-300 rounded shadow-2xs font-medium">
-                          Complete Order
-                        </span>
+                        <div className="flex items-center gap-1.5 sm:gap-2 flex-1 text-[11px] sm:text-xs">
+                          <span className="px-2 sm:px-2.5 py-1 bg-white border border-blue-300 rounded shadow-2xs font-medium whitespace-nowrap">
+                            Create Order
+                          </span>
+                          <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-400 shrink-0" />
+                          <span className="px-2 sm:px-2.5 py-1 bg-white border border-blue-300 rounded shadow-2xs font-medium text-neutral-500 whitespace-nowrap">
+                            (awaits items)
+                          </span>
+                          <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-400 shrink-0" />
+                          <span className="px-2 sm:px-2.5 py-1 bg-white border border-blue-300 rounded shadow-2xs font-medium whitespace-nowrap">
+                            Complete Order
+                          </span>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Items lifecycle lane */}
-                    <div className="flex items-center gap-3 bg-purple-50/50 border border-purple-200 rounded-lg p-3">
-                      <span className="w-20 font-mono text-xs font-bold text-purple-700 shrink-0">
-                        Item (x2):
-                      </span>
-                      <div className="flex items-center gap-2 flex-1 text-xs">
-                        <span className="px-2.5 py-1 bg-white border border-purple-300 rounded shadow-2xs font-medium">
-                          Pick Item (parallel)
+                      {/* Items lifecycle lane */}
+                      <div className="flex items-center gap-2 sm:gap-3 bg-purple-50/50 border border-purple-200 rounded-lg p-2 sm:p-3">
+                        <span className="w-14 sm:w-20 font-mono text-[11px] sm:text-xs font-bold text-purple-700 shrink-0">
+                          Item (x2):
                         </span>
-                        <ArrowRight className="w-3.5 h-3.5 text-purple-400" />
-                        <span className="px-2.5 py-1 bg-white border border-purple-300 rounded shadow-2xs font-medium">
-                          Quality Inspection
-                        </span>
-                        <ArrowRight className="w-3.5 h-3.5 text-purple-400" />
-                        <span className="px-2.5 py-1 bg-white border border-purple-300 rounded shadow-2xs font-medium">
-                          Pack into Box
-                        </span>
+                        <div className="flex items-center gap-1.5 sm:gap-2 flex-1 text-[11px] sm:text-xs">
+                          <span className="px-2 sm:px-2.5 py-1 bg-white border border-purple-300 rounded shadow-2xs font-medium whitespace-nowrap">
+                            Pick Item
+                          </span>
+                          <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-purple-400 shrink-0" />
+                          <span className="px-2 sm:px-2.5 py-1 bg-white border border-purple-300 rounded shadow-2xs font-medium whitespace-nowrap">
+                            Quality Inspection
+                          </span>
+                          <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-purple-400 shrink-0" />
+                          <span className="px-2 sm:px-2.5 py-1 bg-white border border-purple-300 rounded shadow-2xs font-medium whitespace-nowrap">
+                            Pack into Box
+                          </span>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Package & Resource synchronization */}
-                    <div className="flex items-center gap-3 bg-teal-50/50 border border-teal-200 rounded-lg p-3">
-                      <span className="w-20 font-mono text-xs font-bold text-teal-700 shrink-0">
-                        Package:
-                      </span>
-                      <div className="flex items-center gap-2 flex-1 text-xs">
-                        <span className="px-2.5 py-1 bg-white border border-teal-300 rounded shadow-2xs font-medium">
-                          Assemble Box
+                      {/* Package & Resource synchronization */}
+                      <div className="flex items-center gap-2 sm:gap-3 bg-teal-50/50 border border-teal-200 rounded-lg p-2 sm:p-3">
+                        <span className="w-14 sm:w-20 font-mono text-[11px] sm:text-xs font-bold text-teal-700 shrink-0">
+                          Package:
                         </span>
-                        <ArrowRight className="w-3.5 h-3.5 text-teal-400" />
-                        <span className="px-2.5 py-1 bg-white border border-teal-300 rounded shadow-2xs font-medium">
-                          Attach Label
-                        </span>
-                        <ArrowRight className="w-3.5 h-3.5 text-teal-400" />
-                        <span className="px-2.5 py-1 bg-white border border-teal-300 rounded shadow-2xs font-medium">
-                          Carrier Handover
-                        </span>
+                        <div className="flex items-center gap-1.5 sm:gap-2 flex-1 text-[11px] sm:text-xs">
+                          <span className="px-2 sm:px-2.5 py-1 bg-white border border-teal-300 rounded shadow-2xs font-medium whitespace-nowrap">
+                            Assemble Box
+                          </span>
+                          <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-teal-400 shrink-0" />
+                          <span className="px-2 sm:px-2.5 py-1 bg-white border border-teal-300 rounded shadow-2xs font-medium whitespace-nowrap">
+                            Attach Label
+                          </span>
+                          <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-teal-400 shrink-0" />
+                          <span className="px-2 sm:px-2.5 py-1 bg-white border border-teal-300 rounded shadow-2xs font-medium whitespace-nowrap">
+                            Carrier Handover
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
