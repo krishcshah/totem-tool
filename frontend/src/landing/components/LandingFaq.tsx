@@ -10,10 +10,10 @@ export const LandingFaq: React.FC = () => {
   };
 
   return (
-    <section id="faq" className="totem-section-target py-20 sm:py-32 border-b border-[#E4E4E7] bg-[#F7F7F2]">
+    <section id="faq" className="totem-section-target pt-10 sm:pt-14 pb-20 sm:pb-32 border-b border-[#E4E4E7] bg-[#F7F7F2]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16">
+        <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
           <p className="font-mono text-xs uppercase tracking-widest text-neutral-500 font-semibold mb-3">
             FREQUENTLY ASKED QUESTIONS
           </p>
@@ -32,7 +32,7 @@ export const LandingFaq: React.FC = () => {
             return (
               <div
                 key={item.question}
-                className="rounded-xl border border-[#E4E4E7] bg-white overflow-hidden shadow-2xs transition-all"
+                className="rounded-xl border border-[#E4E4E7] bg-white overflow-hidden shadow-2xs transition-all duration-200 hover:border-neutral-300"
               >
                 <button
                   type="button"
@@ -40,26 +40,33 @@ export const LandingFaq: React.FC = () => {
                   aria-expanded={isOpen}
                   aria-controls={`faq-panel-${idx}`}
                   onClick={() => toggleItem(idx)}
-                  className="w-full text-left px-5 py-4 flex items-center justify-between gap-4 font-sans font-semibold text-sm sm:text-base text-[#0B0D0F] hover:bg-neutral-50 transition cursor-pointer"
+                  className="w-full text-left px-5 py-4 flex items-center justify-between gap-4 font-sans font-semibold text-sm sm:text-base text-[#0B0D0F] hover:bg-neutral-50/70 transition-colors cursor-pointer select-none"
                 >
                   <span>{item.question}</span>
-                  <ChevronDown
-                    className={`w-4 h-4 text-neutral-500 shrink-0 transition-transform duration-200 ${
-                      isOpen ? "rotate-180 text-black" : ""
+                  <div
+                    className={`w-6 h-6 rounded-full flex items-center justify-center bg-neutral-100 transition-transform duration-300 shrink-0 ${
+                      isOpen ? "rotate-180 bg-neutral-200/80" : ""
                     }`}
-                  />
+                  >
+                    <ChevronDown className="w-4 h-4 text-neutral-600" />
+                  </div>
                 </button>
 
-                {isOpen && (
-                  <div
-                    id={`faq-panel-${idx}`}
-                    role="region"
-                    aria-labelledby={`faq-btn-${idx}`}
-                    className="px-5 pb-5 pt-1 text-sm text-neutral-600 font-sans leading-relaxed border-t border-neutral-100"
-                  >
-                    {item.answer}
+                {/* Animated CSS Grid accordion container */}
+                <div
+                  id={`faq-panel-${idx}`}
+                  role="region"
+                  aria-labelledby={`faq-btn-${idx}`}
+                  className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
+                    isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0 pointer-events-none"
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="px-5 pb-5 pt-1 text-sm text-neutral-600 font-sans leading-relaxed border-t border-neutral-100">
+                      {item.answer}
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             );
           })}

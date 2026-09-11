@@ -14,7 +14,7 @@ export const LandingNav: React.FC = () => {
   // Scroll listener for sticky elevation and active section spy
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      setIsScrolled(window.scrollY > 40);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -60,10 +60,10 @@ export const LandingNav: React.FC = () => {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      className={`sticky top-0 z-50 w-full transition-[background-color,backdrop-filter,border-color,box-shadow] duration-300 ${
         isScrolled
-          ? "bg-[#F7F7F2]/90 backdrop-blur-md border-b border-[#E4E4E7] shadow-2xs"
-          : "bg-[#F7F7F2]/60 backdrop-blur-xs border-b border-transparent"
+          ? "bg-[#F7F7F2]/80 backdrop-blur-xl backdrop-saturate-180 border-b border-black/[0.08] shadow-[0_4px_24px_-4px_rgba(0,0,0,0.06)]"
+          : "bg-transparent border-b border-transparent shadow-none"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">

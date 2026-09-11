@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef, KeyboardEvent } from "react";
 import { MODEL_FORMALISMS } from "../content";
 import { TableProperties, Check, Share2, Workflow, CircleDot, GitBranch } from "lucide-react";
+import { useInactivityResume } from "../hooks/useInactivityResume";
 
 export const ModelLanguageTabs: React.FC = () => {
   const [activeTabId, setActiveTabId] = useState("totem");
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const { isAutoPlaying, pauseAutoPlay } = useInactivityResume(true, 30000);
   const tabListRef = useRef<HTMLDivElement | null>(null);
 
   // Auto-switch between the 4 formalisms on 2.5s intervals until user interacts
@@ -26,12 +27,12 @@ export const ModelLanguageTabs: React.FC = () => {
     MODEL_FORMALISMS.find((m) => m.id === activeTabId) || MODEL_FORMALISMS[0];
 
   const handleTabSelect = (tabId: string) => {
-    setIsAutoPlaying(false);
+    pauseAutoPlay();
     setActiveTabId(tabId);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLButtonElement>, currentIndex: number) => {
-    setIsAutoPlaying(false);
+    pauseAutoPlay();
     let nextIndex = currentIndex;
 
     if (e.key === "ArrowRight") {
@@ -59,7 +60,7 @@ export const ModelLanguageTabs: React.FC = () => {
   };
 
   return (
-    <section id="models" className="totem-section-target py-20 sm:py-32 border-b border-[#E4E4E7] bg-white">
+    <section id="models" className="totem-section-target pt-10 sm:pt-14 pb-20 sm:pb-32 border-b border-[#E4E4E7] bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="max-w-3xl mb-12 sm:mb-16">

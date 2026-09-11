@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Play, ArrowRight } from "lucide-react";
+import { useInactivityResume } from "../hooks/useInactivityResume";
 
 export const PlayoutStory: React.FC = () => {
   const [selectedVariant, setSelectedVariant] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const { isAutoPlaying, pauseAutoPlay } = useInactivityResume(true, 30000);
 
   const sampleVariants = [
     {
@@ -34,7 +35,7 @@ export const PlayoutStory: React.FC = () => {
   }, [isAutoPlaying, sampleVariants.length]);
 
   const handleVariantSelect = (idx: number) => {
-    setIsAutoPlaying(false);
+    pauseAutoPlay();
     setSelectedVariant(idx);
   };
 

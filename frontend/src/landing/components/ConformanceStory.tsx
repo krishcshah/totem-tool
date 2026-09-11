@@ -1,5 +1,6 @@
 import React from "react";
 import { CheckCircle2, XCircle, HelpCircle, ArrowRight, Search } from "lucide-react";
+import { AnimatedNumber, AnimatedProgressBar } from "./AnimatedMetrics";
 
 export const ConformanceStory: React.FC = () => {
   return (
@@ -118,7 +119,9 @@ export const ConformanceStory: React.FC = () => {
               </div>
               <div>
                 <span className="text-neutral-500 block text-[11px]">Explored States</span>
-                <span className="font-semibold text-neutral-700">148 states</span>
+                <span className="font-semibold text-neutral-700">
+                  <AnimatedNumber value={148} suffix=" states" />
+                </span>
               </div>
             </div>
 
@@ -154,31 +157,31 @@ export const ConformanceStory: React.FC = () => {
             <div className="p-3.5 rounded-lg border border-neutral-200 bg-[#F7F7F2]">
               <div className="flex items-center justify-between text-xs font-mono mb-1">
                 <span className="text-neutral-600">Temporal Fitness</span>
-                <span className="font-bold text-black">94.8%</span>
+                <span className="font-bold text-black">
+                  <AnimatedNumber value={94.8} decimals={1} suffix="%" />
+                </span>
               </div>
-              <div className="w-full bg-neutral-200 rounded-full h-1.5 overflow-hidden">
-                <div className="bg-blue-600 h-1.5 rounded-full" style={{ width: "94.8%" }} />
-              </div>
+              <AnimatedProgressBar percentage={94.8} barClassName="bg-blue-600 h-full rounded-full" />
             </div>
 
             <div className="p-3.5 rounded-lg border border-neutral-200 bg-[#F7F7F2]">
               <div className="flex items-center justify-between text-xs font-mono mb-1">
                 <span className="text-neutral-600">Log Cardinality Fitness</span>
-                <span className="font-bold text-black">98.2%</span>
+                <span className="font-bold text-black">
+                  <AnimatedNumber value={98.2} decimals={1} suffix="%" />
+                </span>
               </div>
-              <div className="w-full bg-neutral-200 rounded-full h-1.5 overflow-hidden">
-                <div className="bg-purple-600 h-1.5 rounded-full" style={{ width: "98.2%" }} />
-              </div>
+              <AnimatedProgressBar percentage={98.2} barClassName="bg-purple-600 h-full rounded-full" />
             </div>
 
             <div className="p-3.5 rounded-lg border border-neutral-200 bg-[#F7F7F2]">
               <div className="flex items-center justify-between text-xs font-mono mb-1">
                 <span className="text-neutral-600">Event Cardinality Fitness</span>
-                <span className="font-bold text-black">91.4%</span>
+                <span className="font-bold text-black">
+                  <AnimatedNumber value={91.4} decimals={1} suffix="%" />
+                </span>
               </div>
-              <div className="w-full bg-neutral-200 rounded-full h-1.5 overflow-hidden">
-                <div className="bg-teal-600 h-1.5 rounded-full" style={{ width: "91.4%" }} />
-              </div>
+              <AnimatedProgressBar percentage={91.4} barClassName="bg-teal-600 h-full rounded-full" />
             </div>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React from "react";
 import { Database, FileCode, CheckCircle2 } from "lucide-react";
 import { ProductWindow } from "./ProductWindow";
+import { AnimatedNumber, AnimatedProgressBar } from "./AnimatedMetrics";
 
 // Authentic previews
 import variantsImg from "@/images/variants-preview.png";
@@ -52,11 +53,15 @@ export const WorkbenchMosaic: React.FC = () => {
                 <div className="grid grid-cols-2 gap-2 text-xs">
                   <div className="p-2.5 rounded bg-neutral-50 border border-neutral-200">
                     <div className="text-[10px] text-neutral-400">EVENTS</div>
-                    <div className="text-lg font-bold text-black">42,190</div>
+                    <div className="text-lg font-bold text-black">
+                      <AnimatedNumber value={42190} />
+                    </div>
                   </div>
                   <div className="p-2.5 rounded bg-neutral-50 border border-neutral-200">
                     <div className="text-[10px] text-neutral-400">OBJECTS</div>
-                    <div className="text-lg font-bold text-black">9,412</div>
+                    <div className="text-lg font-bold text-black">
+                      <AnimatedNumber value={9412} />
+                    </div>
                   </div>
                 </div>
 
@@ -68,31 +73,31 @@ export const WorkbenchMosaic: React.FC = () => {
                     <div>
                       <div className="flex items-center justify-between mb-0.5">
                         <span className="text-blue-700 font-medium">Order (4.2k)</span>
-                        <span className="text-neutral-400 text-[10px]">44.6%</span>
+                        <span className="text-neutral-400 text-[10px]">
+                          <AnimatedNumber value={44.6} decimals={1} suffix="%" />
+                        </span>
                       </div>
-                      <div className="w-full bg-neutral-100 rounded-full h-1.5 overflow-hidden">
-                        <div className="bg-blue-600 h-full rounded-full" style={{ width: "45%" }} />
-                      </div>
+                      <AnimatedProgressBar percentage={45} barClassName="bg-blue-600 h-full rounded-full" />
                     </div>
 
                     <div>
                       <div className="flex items-center justify-between mb-0.5">
                         <span className="text-purple-700 font-medium">Item (12.8k)</span>
-                        <span className="text-neutral-400 text-[10px]">42.1%</span>
+                        <span className="text-neutral-400 text-[10px]">
+                          <AnimatedNumber value={42.1} decimals={1} suffix="%" />
+                        </span>
                       </div>
-                      <div className="w-full bg-neutral-100 rounded-full h-1.5 overflow-hidden">
-                        <div className="bg-purple-600 h-full rounded-full" style={{ width: "42%" }} />
-                      </div>
+                      <AnimatedProgressBar percentage={42} barClassName="bg-purple-600 h-full rounded-full" />
                     </div>
 
                     <div>
                       <div className="flex items-center justify-between mb-0.5">
                         <span className="text-teal-700 font-medium">Package (3.9k)</span>
-                        <span className="text-neutral-400 text-[10px]">13.3%</span>
+                        <span className="text-neutral-400 text-[10px]">
+                          <AnimatedNumber value={13.3} decimals={1} suffix="%" />
+                        </span>
                       </div>
-                      <div className="w-full bg-neutral-100 rounded-full h-1.5 overflow-hidden">
-                        <div className="bg-teal-600 h-full rounded-full" style={{ width: "13%" }} />
-                      </div>
+                      <AnimatedProgressBar percentage={13} barClassName="bg-teal-600 h-full rounded-full" />
                     </div>
                   </div>
                 </div>

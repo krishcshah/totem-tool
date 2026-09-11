@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { WORKFLOW_STAGES } from "../content";
 import { ProductWindow } from "./ProductWindow";
+import { useInactivityResume } from "../hooks/useInactivityResume";
+import { AnimatedNumber } from "./AnimatedMetrics";
 
 // Authentic preview assets from repository
 import variantsImg from "@/images/variants-preview.png";
@@ -8,7 +10,7 @@ import ocdfgImg from "@/images/ocdfg-preview.png";
 
 export const WorkflowStory: React.FC = () => {
   const [activeStageIndex, setActiveStageIndex] = useState(0);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const { isAutoPlaying, pauseAutoPlay } = useInactivityResume(true, 30000);
 
   // Auto-circulate stages on 2.5-second intervals until user interacts
   useEffect(() => {
@@ -22,24 +24,24 @@ export const WorkflowStory: React.FC = () => {
   }, [isAutoPlaying]);
 
   const handleStageSelect = (idx: number) => {
-    setIsAutoPlaying(false);
+    pauseAutoPlay();
     setActiveStageIndex(idx);
   };
 
   const handlePrev = () => {
-    setIsAutoPlaying(false);
+    pauseAutoPlay();
     setActiveStageIndex((prev) => Math.max(0, prev - 1));
   };
 
   const handleNext = () => {
-    setIsAutoPlaying(false);
+    pauseAutoPlay();
     setActiveStageIndex((prev) => Math.min(WORKFLOW_STAGES.length - 1, prev + 1));
   };
 
   const activeStage = WORKFLOW_STAGES[activeStageIndex];
 
   return (
-    <section id="workflow" className="totem-section-target py-20 sm:py-32 border-b border-[#E4E4E7] bg-[#F7F7F2]">
+    <section id="workflow" className="totem-section-target pt-10 sm:pt-14 pb-20 sm:pb-32 border-b border-[#E4E4E7] bg-[#F7F7F2]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="max-w-3xl mb-12 sm:mb-16">
@@ -322,12 +324,16 @@ export const WorkflowStory: React.FC = () => {
                   <div className="h-full p-6 bg-white flex flex-col justify-center space-y-4">
                     <div className="grid grid-cols-3 gap-3 text-center font-mono">
                       <div className="p-3 rounded bg-emerald-50 border border-emerald-300 text-emerald-900">
-                        <div className="text-lg font-bold">142</div>
+                        <div className="text-lg font-bold">
+                          <AnimatedNumber value={142} />
+                        </div>
                         <div className="text-xs font-semibold">Fitting Units</div>
                         <div className="text-[10px] text-emerald-700 mt-1">Complete replay</div>
                       </div>
                       <div className="p-3 rounded bg-red-50 border border-red-300 text-red-900">
-                        <div className="text-lg font-bold">12</div>
+                        <div className="text-lg font-bold">
+                          <AnimatedNumber value={12} />
+                        </div>
                         <div className="text-xs font-semibold">Non-Fitting</div>
                         <div className="text-[10px] text-red-700 mt-1">Deviations proven</div>
                       </div>
@@ -339,7 +345,9 @@ export const WorkflowStory: React.FC = () => {
                     </div>
                     <div className="p-3 rounded border border-neutral-200 bg-neutral-50 text-xs font-mono flex items-center justify-between">
                       <span>Overall Replay Fitness:</span>
-                      <span className="font-bold text-sm text-black">92.2% (Coverage: 1.0)</span>
+                      <span className="font-bold text-sm text-black">
+                        <AnimatedNumber value={92.2} decimals={1} suffix="%" /> (Coverage: 1.0)
+                      </span>
                     </div>
                   </div>
                 </ProductWindow>

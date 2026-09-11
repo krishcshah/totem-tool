@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { ProductWindow } from "./ProductWindow";
 import { Layers } from "lucide-react";
 import processAreaImg from "@/images/process-area-preview.png";
+import { useInactivityResume } from "../hooks/useInactivityResume";
 
 export const ProcessAreaStory: React.FC = () => {
   // Process area signal focus
   const [activeSignal, setActiveSignal] = useState<"temporal" | "cardinality" | "divergence">("temporal");
   // Resource-aware demo mode
   const [extractionMode, setExtractionMode] = useState<"connected" | "resource_aware">("resource_aware");
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const { isAutoPlaying, pauseAutoPlay } = useInactivityResume(true, 30000);
 
   // Auto-cycle signals and extraction modes on 2.5s intervals until user interacts
   useEffect(() => {
@@ -27,12 +28,12 @@ export const ProcessAreaStory: React.FC = () => {
   }, [isAutoPlaying]);
 
   const handleSignalSelect = (sig: "temporal" | "cardinality" | "divergence") => {
-    setIsAutoPlaying(false);
+    pauseAutoPlay();
     setActiveSignal(sig);
   };
 
   const handleExtractionSelect = (mode: "connected" | "resource_aware") => {
-    setIsAutoPlaying(false);
+    pauseAutoPlay();
     setExtractionMode(mode);
   };
 

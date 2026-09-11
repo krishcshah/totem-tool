@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { ArrowRight, Check, AlertCircle } from "lucide-react";
+import { useInactivityResume } from "../hooks/useInactivityResume";
 
 export const ObjectCentricComparison: React.FC = () => {
   const [viewMode, setViewMode] = useState<"flattened" | "object_centric">("object_centric");
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const { isAutoPlaying, pauseAutoPlay } = useInactivityResume(true, 30000);
 
   // Auto-flip perspective every 2.5 seconds until user interacts
   useEffect(() => {
@@ -17,12 +18,12 @@ export const ObjectCentricComparison: React.FC = () => {
   }, [isAutoPlaying]);
 
   const handleModeSelect = (mode: "flattened" | "object_centric") => {
-    setIsAutoPlaying(false);
+    pauseAutoPlay();
     setViewMode(mode);
   };
 
   return (
-    <section id="why" className="totem-section-target py-20 sm:py-28 border-b border-[#E4E4E7] bg-white">
+    <section id="why" className="totem-section-target pt-10 sm:pt-14 pb-20 sm:pb-28 border-b border-[#E4E4E7] bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Editorial Header */}
         <div className="max-w-3xl mb-12">

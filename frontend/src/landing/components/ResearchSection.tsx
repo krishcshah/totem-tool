@@ -12,7 +12,7 @@ export const ResearchSection: React.FC = () => {
   };
 
   return (
-    <section id="research" className="totem-section-target py-20 sm:py-32 border-b border-[#E4E4E7] bg-white">
+    <section id="research" className="totem-section-target pt-10 sm:pt-14 pb-20 sm:pb-32 border-b border-[#E4E4E7] bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="max-w-3xl mb-16">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { OBJECT_THREADS, ObjectThread } from "../content";
 import { TotemMark } from "./TotemMark";
+import { useInactivityResume } from "../hooks/useInactivityResume";
 
 interface HeroProcessMapProps {
   onSelectThread?: (threadId: string | null) => void;
@@ -21,7 +22,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
   const [pinnedType, setPinnedType] = useState<string | null>(null);
   const [motionReduced, setMotionReduced] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const { isAutoPlaying, pauseAutoPlay } = useInactivityResume(true, 30000);
 
   // Micro-detail wordmark animation phase
   const [wordmarkPhase, setWordmarkPhase] = useState<"full" | "condensing" | "resolved">("full");
@@ -64,7 +65,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
 
   const handleTypeHover = (typeId: string | null) => {
     if (typeId) {
-      setIsAutoPlaying(false);
+      pauseAutoPlay();
     }
     if (!pinnedType) {
       setActiveType(typeId);
@@ -73,7 +74,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
   };
 
   const handleTypeClick = (typeId: string) => {
-    setIsAutoPlaying(false);
+    pauseAutoPlay();
     const next = pinnedType === typeId ? null : typeId;
     setPinnedType(next);
     setActiveType(next);
