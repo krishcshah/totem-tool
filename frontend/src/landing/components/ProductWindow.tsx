@@ -9,12 +9,14 @@ interface ProductWindowProps {
   eager?: boolean;
   dark?: boolean;
   className?: string;
+  viewportClassName?: string;
   children?: React.ReactNode;
 }
 
 /**
  * Clean architectural frame for displaying authentic repository screenshots
  * and live interactive workbench mockups without fake browser URLs.
+ * Supports fixed viewport height to completely eliminate layout shifts.
  */
 export const ProductWindow: React.FC<ProductWindowProps> = ({
   title,
@@ -25,17 +27,18 @@ export const ProductWindow: React.FC<ProductWindowProps> = ({
   eager = false,
   dark = false,
   className = "",
+  viewportClassName = "",
   children,
 }) => {
   return (
     <figure
-      className={`rounded-lg border overflow-hidden transition-shadow duration-300 ${
+      className={`rounded-xl border overflow-hidden transition-shadow duration-300 ${
         dark
           ? "bg-[#14181F] border-[#242B35] text-slate-100 shadow-xl shadow-black/40"
-          : "bg-white border-[#E4E4E7] text-[#0B0D0F] shadow-sm hover:shadow-md"
+          : "bg-white border-[#E4E4E7] text-[#0B0D0F] shadow-xs hover:shadow-md"
       } ${className}`}
     >
-      {/* Restrained window header */}
+      {/* Window header */}
       <div
         className={`px-3 py-2 border-b flex items-center justify-between text-xs select-none ${
           dark ? "bg-[#0D1014]/80 border-[#242B35]" : "bg-neutral-50/80 border-[#E4E4E7]"
@@ -64,30 +67,40 @@ export const ProductWindow: React.FC<ProductWindowProps> = ({
         )}
       </div>
 
-      {/* Body content */}
-      <div className="relative w-full overflow-hidden bg-neutral-900/5">
+      {/* Body content with optional fixed viewport height */}
+      <div
+        className={`relative w-full overflow-hidden bg-neutral-900/5 ${
+          viewportClassName
+            ? `${viewportClassName} flex items-center justify-center`
+            : ""
+        }`}
+      >
         {imageSrc ? (
           <img
             src={imageSrc}
             alt={imageAlt || title}
             loading={eager ? "eager" : "lazy"}
             decoding="async"
-            className="w-full h-auto block object-contain select-none"
+            className={`w-full select-none ${
+              viewportClassName
+                ? "h-full object-contain p-2"
+                : "h-auto block object-contain"
+            }`}
           />
         ) : (
-          children
+          <div className="w-full h-full">{children}</div>
         )}
       </div>
 
       {caption && (
         <figcaption
-          className={`px-3 py-2 text-xs border-t font-sans leading-relaxed ${
+          className={`px-3 py-2 text-xs border-t font-sans leading-relaxed min-h-[44px] flex items-center ${
             dark
               ? "bg-[#0D1014]/60 border-[#242B35] text-slate-400"
               : "bg-neutral-50/50 border-[#E4E4E7] text-neutral-600"
           }`}
         >
-          {caption}
+          <span>{caption}</span>
         </figcaption>
       )}
     </figure>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ProductWindow } from "./ProductWindow";
 import { Layers } from "lucide-react";
 import processAreaImg from "@/images/process-area-preview.png";
@@ -6,44 +6,74 @@ import processAreaImg from "@/images/process-area-preview.png";
 export const ProcessAreaStory: React.FC = () => {
   // Process area signal focus
   const [activeSignal, setActiveSignal] = useState<"temporal" | "cardinality" | "divergence">("temporal");
-
   // Resource-aware demo mode
   const [extractionMode, setExtractionMode] = useState<"connected" | "resource_aware">("resource_aware");
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  // Auto-cycle signals and extraction modes on 2.5s intervals until user interacts
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+
+    const signals: ("temporal" | "cardinality" | "divergence")[] = ["temporal", "cardinality", "divergence"];
+    const timer = setInterval(() => {
+      setActiveSignal((prev) => {
+        const nextIdx = (signals.indexOf(prev) + 1) % signals.length;
+        return signals[nextIdx];
+      });
+      setExtractionMode((prev) => (prev === "connected" ? "resource_aware" : "connected"));
+    }, 2500);
+
+    return () => clearInterval(timer);
+  }, [isAutoPlaying]);
+
+  const handleSignalSelect = (sig: "temporal" | "cardinality" | "divergence") => {
+    setIsAutoPlaying(false);
+    setActiveSignal(sig);
+  };
+
+  const handleExtractionSelect = (mode: "connected" | "resource_aware") => {
+    setIsAutoPlaying(false);
+    setExtractionMode(mode);
+  };
 
   return (
-    <section className="py-24 sm:py-32 bg-[#0D1014] text-slate-100 border-b border-[#232B36] relative overflow-hidden">
-      {/* Background theater grid pattern */}
-      <div className="absolute inset-0 totem-theater-grid-bg pointer-events-none opacity-40" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Top Header */}
+    <section className="totem-theater-surface py-20 sm:py-32 border-b border-[#232B36] totem-theater-grid-bg relative">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section Header */}
         <div className="max-w-3xl mb-16">
-          <p className="font-mono text-xs uppercase tracking-widest text-amber-400 font-semibold mb-3">
-            FIND THE BOUNDARY
+          <p className="font-mono text-xs uppercase tracking-widest text-amber-400 font-semibold mb-3 flex items-center gap-2">
+            <span>DECOMPOSITION & SCALE</span>
+            {isAutoPlaying && (
+              <span className="inline-flex items-center gap-1 text-[10px] text-amber-300 font-mono px-2 py-0.5 rounded-full bg-amber-950/60 border border-amber-500/40">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                AUTO-CYCLING 2.5s
+              </span>
+            )}
           </p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-white leading-tight mb-6">
-            Find the process boundary before you count the variants.
+            From log to process areas. From areas to executions.
           </h2>
-          <p className="text-lg text-slate-300 leading-relaxed font-sans totem-measure">
-            Process Areas group object types by process perspective and arrange them in layers,
-            placing resources above the objects they serve. Temporal, cardinality, and divergence
-            signals help reveal that hierarchy.
+          <p className="text-lg text-slate-300 leading-relaxed font-sans totem-measure mb-4">
+            Industrial OCEL logs contain millions of events and dozens of object types. Attempting
+            to view the entire log at once creates an unreadable hairball. TOTeM decomposes the
+            log into coherent process areas using multi-signal heuristics.
           </p>
+          <div className="flex items-center gap-2 text-xs font-mono text-amber-400">
+            <Layers className="w-4 h-4" />
+            <span>Three-Tier Hierarchy: Event Log → Process Areas → Process Executions</span>
+          </div>
         </div>
 
-        {/* Layered Process Area Diagram & Signals */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-20">
+        {/* Multi-Level Architecture Showcase */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-16">
           {/* Left: Layered Vector Diagram */}
-          <div className="lg:col-span-7 bg-[#14181F] rounded-xl border border-[#232B36] p-6 shadow-2xl">
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-[#232B36] text-xs font-mono text-slate-400">
-              <span className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-amber-400" />
-                Multi-Level Process Hierarchy
-              </span>
-              <span className="text-[11px] text-slate-500">Illustrative visualization</span>
+          <div className="lg:col-span-7 bg-[#14181F] rounded-xl border border-[#232B36] p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#232B36] text-xs font-mono">
+              <span className="text-slate-400">Hierarchical Level Graph</span>
+              <span className="text-amber-400">TOTeM Level Decomposition</span>
             </div>
 
-            {/* Visual SVG showing multi-tier layers */}
+            {/* SVG Visualizing Tiered Graph */}
             <svg
               viewBox="0 0 600 280"
               className="w-full h-auto select-none"
@@ -92,8 +122,8 @@ export const ProcessAreaStory: React.FC = () => {
                 height="90"
                 rx="8"
                 fill="#161C26"
-                stroke={activeSignal === "cardinality" ? "#38BDF8" : "#334155"}
-                strokeWidth={activeSignal === "cardinality" ? "2" : "1"}
+                stroke={activeSignal === "cardinality" ? "#38BDF8" : activeSignal === "divergence" ? "#C084FC" : "#334155"}
+                strokeWidth={activeSignal !== "temporal" ? "2" : "1"}
               />
               <text x="60" y="185" fill="#38BDF8" fontSize="11" fontFamily="JetBrains Mono" fontWeight="600">
                 LEVEL 1 · BUSINESS OBJECTS (Order, Item, Package)
@@ -121,36 +151,45 @@ export const ProcessAreaStory: React.FC = () => {
               <span className="text-xs font-mono text-slate-400 mr-1">Heuristic Signals:</span>
               <button
                 type="button"
-                onClick={() => setActiveSignal("temporal")}
-                className={`px-3 py-1 text-xs font-mono rounded transition cursor-pointer ${
+                onClick={() => handleSignalSelect("temporal")}
+                className={`relative px-3 py-1 text-xs font-mono rounded transition cursor-pointer overflow-hidden ${
                   activeSignal === "temporal"
                     ? "bg-amber-500/20 text-amber-300 border border-amber-500 font-semibold"
-                    : "bg-[#232B36] text-slate-400 hover:text-white"
+                    : "bg-[#232B36] text-slate-400 hover:text-white border border-transparent"
                 }`}
               >
-                Temporal duration
+                <span>Temporal duration</span>
+                {activeSignal === "temporal" && isAutoPlaying && (
+                  <div className="absolute bottom-0 left-0 h-0.5 bg-amber-400 animate-tab-progress" />
+                )}
               </button>
               <button
                 type="button"
-                onClick={() => setActiveSignal("cardinality")}
-                className={`px-3 py-1 text-xs font-mono rounded transition cursor-pointer ${
+                onClick={() => handleSignalSelect("cardinality")}
+                className={`relative px-3 py-1 text-xs font-mono rounded transition cursor-pointer overflow-hidden ${
                   activeSignal === "cardinality"
                     ? "bg-sky-500/20 text-sky-300 border border-sky-500 font-semibold"
-                    : "bg-[#232B36] text-slate-400 hover:text-white"
+                    : "bg-[#232B36] text-slate-400 hover:text-white border border-transparent"
                 }`}
               >
-                Cardinality divergence
+                <span>Cardinality divergence</span>
+                {activeSignal === "cardinality" && isAutoPlaying && (
+                  <div className="absolute bottom-0 left-0 h-0.5 bg-sky-400 animate-tab-progress" />
+                )}
               </button>
               <button
                 type="button"
-                onClick={() => setActiveSignal("divergence")}
-                className={`px-3 py-1 text-xs font-mono rounded transition cursor-pointer ${
+                onClick={() => handleSignalSelect("divergence")}
+                className={`relative px-3 py-1 text-xs font-mono rounded transition cursor-pointer overflow-hidden ${
                   activeSignal === "divergence"
                     ? "bg-purple-500/20 text-purple-300 border border-purple-500 font-semibold"
-                    : "bg-[#232B36] text-slate-400 hover:text-white"
+                    : "bg-[#232B36] text-slate-400 hover:text-white border border-transparent"
                 }`}
               >
-                Graph divergence
+                <span>Graph divergence</span>
+                {activeSignal === "divergence" && isAutoPlaying && (
+                  <div className="absolute bottom-0 left-0 h-0.5 bg-purple-400 animate-tab-progress" />
+                )}
               </button>
             </div>
           </div>
@@ -161,6 +200,7 @@ export const ProcessAreaStory: React.FC = () => {
               title="Process Area Discovery"
               viewLabel="Analysis View"
               dark={true}
+              viewportClassName="h-[280px] sm:h-[300px]"
               caption="Authentic view from TOTeM: clusters of related object types arranged in levels based on interaction frequencies."
               imageSrc={processAreaImg}
               imageAlt="Process Area discovery screenshot showing clustered object types"
@@ -193,27 +233,33 @@ export const ProcessAreaStory: React.FC = () => {
                 <div className="inline-flex rounded-lg border border-[#232B36] bg-[#0D1014] p-1">
                   <button
                     type="button"
-                    onClick={() => setExtractionMode("connected")}
-                    className={`px-3 py-1 text-xs font-mono rounded cursor-pointer transition ${
+                    onClick={() => handleExtractionSelect("connected")}
+                    className={`relative px-3 py-1 text-xs font-mono rounded cursor-pointer transition overflow-hidden ${
                       extractionMode === "connected"
                         ? "bg-red-500 text-white font-semibold"
                         : "text-slate-400 hover:text-white"
                     }`}
                     aria-pressed={extractionMode === "connected"}
                   >
-                    Connected components
+                    <span>Connected components</span>
+                    {extractionMode === "connected" && isAutoPlaying && (
+                      <div className="absolute bottom-0 left-0 h-0.5 bg-white/80 animate-tab-progress" />
+                    )}
                   </button>
                   <button
                     type="button"
-                    onClick={() => setExtractionMode("resource_aware")}
-                    className={`px-3 py-1 text-xs font-mono rounded cursor-pointer transition ${
+                    onClick={() => handleExtractionSelect("resource_aware")}
+                    className={`relative px-3 py-1 text-xs font-mono rounded cursor-pointer transition overflow-hidden ${
                       extractionMode === "resource_aware"
                         ? "bg-amber-500 text-black font-semibold"
                         : "text-slate-400 hover:text-white"
                     }`}
                     aria-pressed={extractionMode === "resource_aware"}
                   >
-                    Resource-aware (TOTeM)
+                    <span>Resource-aware (TOTeM)</span>
+                    {extractionMode === "resource_aware" && isAutoPlaying && (
+                      <div className="absolute bottom-0 left-0 h-0.5 bg-black/80 animate-tab-progress" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -228,48 +274,50 @@ export const ProcessAreaStory: React.FC = () => {
               </div>
             </div>
 
-            {/* Visual comparison of executions */}
-            <div className="pt-8">
-              {extractionMode === "connected" ? (
-                /* Connected Components: Everything collapsed into 1 massive execution */
-                <div className="p-6 rounded-lg border-2 border-dashed border-red-500/40 bg-red-950/20 text-center space-y-3 animate-in fade-in duration-300">
-                  <div className="font-mono text-xs text-red-400 font-bold uppercase tracking-wider">
-                    Single Giant Execution Detected (1 Component)
-                  </div>
-                  <p className="text-sm text-slate-300 max-w-xl mx-auto font-sans">
-                    Because Worker W-1 touches Order 1, Order 2, Order 3, and Order 4 across their respective
-                    shifts, all orders are merged into one single 500-event execution. Variant analysis becomes
-                    unusable.
-                  </p>
-                  <div className="font-mono text-xs text-red-400/90 font-semibold">
-                    1 Giant Execution · Inability to isolate single customer order lifecycles
-                  </div>
-                </div>
-              ) : (
-                /* Resource-Aware: Clean separation into 4 distinct business executions */
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-in fade-in duration-300">
-                  {[1, 2, 3, 4].map((num) => (
-                    <div
-                      key={num}
-                      className="p-4 rounded-lg border border-amber-500/40 bg-amber-950/20 space-y-2"
-                    >
-                      <div className="flex items-center justify-between font-mono text-xs text-amber-400">
-                        <span className="font-bold">Execution #{num}</span>
-                        <span className="text-[10px] bg-amber-500/20 px-1.5 py-0.5 rounded text-amber-300">
-                          Order {num}
-                        </span>
-                      </div>
-                      <p className="text-xs text-slate-300 font-sans">
-                        Defined by commercial order and items. Worker W-1 events included as contextual
-                        annotations without merging orders.
-                      </p>
-                      <div className="font-mono text-[11px] text-slate-400 pt-1 border-t border-amber-500/20">
-                        ✓ Clean variant signature
-                      </div>
+            {/* Visual comparison of executions — Locked fixed height container */}
+            <div className="pt-8 min-h-[170px] flex items-center justify-center">
+              <div key={extractionMode} className="w-full tab-content-enter">
+                {extractionMode === "connected" ? (
+                  /* Connected Components: Everything collapsed into 1 massive execution */
+                  <div className="p-6 rounded-lg border-2 border-dashed border-red-500/40 bg-red-950/20 text-center space-y-3">
+                    <div className="font-mono text-xs text-red-400 font-bold uppercase tracking-wider">
+                      Single Giant Execution Detected (1 Component)
                     </div>
-                  ))}
-                </div>
-              )}
+                    <p className="text-sm text-slate-300 max-w-xl mx-auto font-sans">
+                      Because Worker W-1 touches Order 1, Order 2, Order 3, and Order 4 across their respective
+                      shifts, all orders are merged into one single 500-event execution. Variant analysis becomes
+                      unusable.
+                    </p>
+                    <div className="font-mono text-xs text-red-400/90 font-semibold">
+                      1 Giant Execution · Inability to isolate single customer order lifecycles
+                    </div>
+                  </div>
+                ) : (
+                  /* Resource-Aware: Clean separation into 4 distinct business executions */
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[1, 2, 3, 4].map((num) => (
+                      <div
+                        key={num}
+                        className="p-4 rounded-lg border border-amber-500/40 bg-amber-950/20 space-y-2 card-hover-lift"
+                      >
+                        <div className="flex items-center justify-between font-mono text-xs text-amber-400">
+                          <span className="font-bold">Execution #{num}</span>
+                          <span className="text-[10px] bg-amber-500/20 px-1.5 py-0.5 rounded text-amber-300">
+                            Order {num}
+                          </span>
+                        </div>
+                        <p className="text-xs text-slate-300 font-sans">
+                          Defined by commercial order and items. Worker W-1 events included as contextual
+                          annotations without merging orders.
+                        </p>
+                        <div className="font-mono text-[11px] text-slate-400 pt-1 border-t border-amber-500/20">
+                          ✓ Clean variant signature
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>

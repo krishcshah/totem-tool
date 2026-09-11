@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { WORKFLOW_STAGES } from "../content";
 import { ProductWindow } from "./ProductWindow";
 
@@ -9,6 +9,33 @@ import ocdfgImg from "@/images/ocdfg-preview.png";
 
 export const WorkflowStory: React.FC = () => {
   const [activeStageIndex, setActiveStageIndex] = useState(0);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+
+  // Auto-circulate stages on 2.5-second intervals until user interacts
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+
+    const timer = setInterval(() => {
+      setActiveStageIndex((prev) => (prev + 1) % WORKFLOW_STAGES.length);
+    }, 2500);
+
+    return () => clearInterval(timer);
+  }, [isAutoPlaying]);
+
+  const handleStageSelect = (idx: number) => {
+    setIsAutoPlaying(false);
+    setActiveStageIndex(idx);
+  };
+
+  const handlePrev = () => {
+    setIsAutoPlaying(false);
+    setActiveStageIndex((prev) => Math.max(0, prev - 1));
+  };
+
+  const handleNext = () => {
+    setIsAutoPlaying(false);
+    setActiveStageIndex((prev) => Math.min(WORKFLOW_STAGES.length - 1, prev + 1));
+  };
 
   const activeStage = WORKFLOW_STAGES[activeStageIndex];
 
@@ -16,9 +43,15 @@ export const WorkflowStory: React.FC = () => {
     <section id="workflow" className="totem-section-target py-20 sm:py-32 border-b border-[#E4E4E7] bg-[#F7F7F2]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="max-w-3xl mb-16">
-          <p className="font-mono text-xs uppercase tracking-widest text-neutral-500 font-semibold mb-3">
-            ONE CONTINUOUS WORKBENCH
+        <div className="max-w-3xl mb-12 sm:mb-16">
+          <p className="font-mono text-xs uppercase tracking-widest text-neutral-500 font-semibold mb-3 flex items-center gap-2">
+            <span>ONE CONTINUOUS WORKBENCH</span>
+            {isAutoPlaying && (
+              <span className="inline-flex items-center gap-1 text-[10px] text-blue-600 font-mono px-2 py-0.5 rounded-full bg-blue-50 border border-blue-200">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
+                AUTO-PLAYING 2.5s
+              </span>
+            )}
           </p>
           <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-[#0B0D0F] leading-tight mb-6">
             From event log to evidence.
@@ -30,15 +63,15 @@ export const WorkflowStory: React.FC = () => {
         </div>
 
         {/* Stage Selector Tabs (Sticky / Interactive on desktop and tablet) */}
-        <div className="mb-10 flex overflow-x-auto pb-2 gap-2 border-b border-neutral-300/80 no-scrollbar">
+        <div className="mb-8 flex overflow-x-auto pb-2 gap-2 border-b border-neutral-300/80 no-scrollbar">
           {WORKFLOW_STAGES.map((stage, idx) => {
             const isSelected = activeStageIndex === idx;
             return (
               <button
                 key={stage.number}
                 type="button"
-                onClick={() => setActiveStageIndex(idx)}
-                className={`px-4 py-2.5 rounded-lg text-left transition-all shrink-0 cursor-pointer ${
+                onClick={() => handleStageSelect(idx)}
+                className={`relative px-4 py-2.5 rounded-lg text-left transition-all shrink-0 cursor-pointer overflow-hidden ${
                   isSelected
                     ? "bg-white text-black shadow-xs border border-neutral-300 font-semibold"
                     : "text-neutral-500 hover:text-black hover:bg-black/5 border border-transparent font-medium"
@@ -47,16 +80,21 @@ export const WorkflowStory: React.FC = () => {
               >
                 <div className="font-mono text-[11px] text-neutral-400">{stage.number}</div>
                 <div className="text-xs font-sans whitespace-nowrap">{stage.tag}</div>
+
+                {/* Animated 2.5s progress bar on the active tab while auto-playing */}
+                {isSelected && isAutoPlaying && (
+                  <div className="absolute bottom-0 left-0 h-0.5 bg-blue-600 animate-tab-progress" />
+                )}
               </button>
             );
           })}
         </div>
 
-        {/* Dynamic Stage Visual & Detail Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-          {/* Left: Text & Step Narrative */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
-            <div className="space-y-4">
+        {/* Dynamic Stage Visual & Detail Row — Fixed height container to prevent layout jumping */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
+          {/* Left Column: Fixed height layout */}
+          <div className="lg:col-span-5 h-[420px] sm:h-[460px] flex flex-col justify-between bg-white/60 p-6 rounded-xl border border-neutral-200/80">
+            <div key={activeStage.number} className="tab-content-enter flex-1 flex flex-col justify-start space-y-4">
               <div className="flex items-center gap-3">
                 <span className="font-mono text-xs font-semibold px-2.5 py-1 bg-black text-white rounded">
                   {activeStage.step}
@@ -70,13 +108,13 @@ export const WorkflowStory: React.FC = () => {
                 {activeStage.title}
               </h3>
 
-              <p className="text-base text-neutral-600 leading-relaxed font-sans">
+              <p className="text-sm sm:text-base text-neutral-600 leading-relaxed font-sans line-clamp-4">
                 {activeStage.copy}
               </p>
 
               {/* Supported formats for Step 1 */}
               {activeStage.supportedFormats && (
-                <div className="pt-2">
+                <div className="pt-1">
                   <span className="font-mono text-xs text-neutral-500 block mb-2">
                     Verified supported formats:
                   </span>
@@ -84,7 +122,7 @@ export const WorkflowStory: React.FC = () => {
                     {activeStage.supportedFormats.map((fmt) => (
                       <span
                         key={fmt}
-                        className="px-2.5 py-1 bg-white border border-[#E4E4E7] rounded text-neutral-700 shadow-2xs"
+                        className="px-2 py-0.5 bg-white border border-[#E4E4E7] rounded text-neutral-700 shadow-2xs"
                       >
                         {fmt}
                       </span>
@@ -94,179 +132,192 @@ export const WorkflowStory: React.FC = () => {
               )}
             </div>
 
-            {/* Quick Next/Prev Stepper */}
-            <div className="pt-6 border-t border-neutral-200 flex items-center justify-between">
+            {/* Quick Next/Prev Stepper pinned at the bottom */}
+            <div className="pt-4 border-t border-neutral-200 flex items-center justify-between mt-auto">
               <button
                 type="button"
                 disabled={activeStageIndex === 0}
-                onClick={() => setActiveStageIndex((prev) => Math.max(0, prev - 1))}
-                className="text-xs font-mono px-3 py-1.5 rounded border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                onClick={handlePrev}
+                className="text-xs font-mono px-3 py-1.5 rounded border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-50 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-transform active:scale-95"
               >
                 ← Previous stage
               </button>
+
+              <div className="font-mono text-xs text-neutral-400">
+                {activeStageIndex + 1} / {WORKFLOW_STAGES.length}
+              </div>
+
               <button
                 type="button"
                 disabled={activeStageIndex === WORKFLOW_STAGES.length - 1}
-                onClick={() => setActiveStageIndex((prev) => Math.min(WORKFLOW_STAGES.length - 1, prev + 1))}
-                className="text-xs font-mono px-3 py-1.5 rounded bg-black text-white hover:bg-neutral-800 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
+                onClick={handleNext}
+                className="text-xs font-mono px-3 py-1.5 rounded bg-black text-white hover:bg-neutral-800 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-transform active:scale-95"
               >
                 Next stage →
               </button>
             </div>
           </div>
 
-          {/* Right: Authentic Product Visual or Accurate Vector Mockup */}
-          <div className="lg:col-span-7">
-            {activeStageIndex === 0 && (
-              /* 01 Import: Authentic Log Statistics Screenshot & DuckDB Target */
-              <ProductWindow
-                title="Event Log Import & Validation"
-                viewLabel="DuckDB Engine"
-                caption="Incoming OCEL 2.0 formats (.sqlite, .json, .xml, .csv) are validated and converted into high-performance columnar DuckDB storage."
-                imageSrc={logStatsImg}
-                imageAlt="TOTeM Log Statistics preview showing events, objects, and timestamps"
-              />
-            )}
+          {/* Right Column: Fixed height ProductWindow */}
+          <div className="lg:col-span-7 h-[420px] sm:h-[460px] flex flex-col">
+            <div key={activeStageIndex} className="tab-content-enter h-full">
+              {activeStageIndex === 0 && (
+                /* 01 Import: Authentic Log Statistics Screenshot & DuckDB Target */
+                <ProductWindow
+                  title="Event Log Import & Validation"
+                  viewLabel="DuckDB Engine"
+                  viewportClassName="h-[320px] sm:h-[360px]"
+                  caption="Incoming OCEL 2.0 formats (.sqlite, .json, .xml, .csv) are validated and converted into high-performance columnar DuckDB storage."
+                  imageSrc={logStatsImg}
+                  imageAlt="TOTeM Log Statistics preview showing events, objects, and timestamps"
+                />
+              )}
 
-            {activeStageIndex === 1 && (
-              /* 02 Orient: Multilevel profiling */
-              <ProductWindow
-                title="Process Profile & Global Filters"
-                viewLabel="Multi-Level Overview"
-                caption="Inspect time ranges, activity histograms, and object type distributions before isolating process boundaries."
-              >
-                <div className="p-6 bg-white space-y-4">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div className="p-3 rounded border border-neutral-200 bg-neutral-50">
-                      <div className="text-[11px] font-mono text-neutral-500">Events</div>
-                      <div className="text-xl font-bold font-mono text-black">42,190</div>
+              {activeStageIndex === 1 && (
+                /* 02 Orient: Multilevel profiling */
+                <ProductWindow
+                  title="Process Profile & Global Filters"
+                  viewLabel="Multi-Level Overview"
+                  viewportClassName="h-[320px] sm:h-[360px]"
+                  caption="Inspect time ranges, activity histograms, and object type distributions before isolating process boundaries."
+                >
+                  <div className="h-full p-6 bg-white flex flex-col justify-center space-y-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="p-3 rounded border border-neutral-200 bg-neutral-50">
+                        <div className="text-[11px] font-mono text-neutral-500">Events</div>
+                        <div className="text-xl font-bold font-mono text-black">42,190</div>
+                      </div>
+                      <div className="p-3 rounded border border-neutral-200 bg-neutral-50">
+                        <div className="text-[11px] font-mono text-neutral-500">Objects</div>
+                        <div className="text-xl font-bold font-mono text-black">9,412</div>
+                      </div>
+                      <div className="p-3 rounded border border-neutral-200 bg-neutral-50">
+                        <div className="text-[11px] font-mono text-neutral-500">Object Types</div>
+                        <div className="text-xl font-bold font-mono text-blue-600">4 Types</div>
+                      </div>
+                      <div className="p-3 rounded border border-neutral-200 bg-neutral-50">
+                        <div className="text-[11px] font-mono text-neutral-500">Activities</div>
+                        <div className="text-xl font-bold font-mono text-purple-600">12 Distinct</div>
+                      </div>
                     </div>
-                    <div className="p-3 rounded border border-neutral-200 bg-neutral-50">
-                      <div className="text-[11px] font-mono text-neutral-500">Objects</div>
-                      <div className="text-xl font-bold font-mono text-black">9,412</div>
-                    </div>
-                    <div className="p-3 rounded border border-neutral-200 bg-neutral-50">
-                      <div className="text-[11px] font-mono text-neutral-500">Object Types</div>
-                      <div className="text-xl font-bold font-mono text-blue-600">4 Types</div>
-                    </div>
-                    <div className="p-3 rounded border border-neutral-200 bg-neutral-50">
-                      <div className="text-[11px] font-mono text-neutral-500">Activities</div>
-                      <div className="text-xl font-bold font-mono text-purple-600">12 Distinct</div>
+                    {/* Filter chips representation */}
+                    <div className="p-3 rounded border border-neutral-200 flex flex-wrap items-center gap-2 text-xs font-mono bg-neutral-50/50">
+                      <span className="text-neutral-400">Global Filters:</span>
+                      <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">
+                        Types: order, item, package
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-purple-100 text-purple-800 border border-purple-200">
+                        Activities: all
+                      </span>
+                      <span className="px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-300">
+                        Time: 2026-Q1
+                      </span>
                     </div>
                   </div>
-                  {/* Filter chips representation */}
-                  <div className="p-3 rounded border border-neutral-200 flex flex-wrap items-center gap-2 text-xs font-mono">
-                    <span className="text-neutral-400">Global Filters:</span>
-                    <span className="px-2 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">
-                      Types: order, item, package
-                    </span>
-                    <span className="px-2 py-0.5 rounded bg-purple-100 text-purple-800 border border-purple-200">
-                      Activities: all
-                    </span>
-                    <span className="px-2 py-0.5 rounded bg-neutral-100 text-neutral-800 border border-neutral-300">
-                      Time: 2026-Q1
-                    </span>
-                  </div>
-                </div>
-              </ProductWindow>
-            )}
+                </ProductWindow>
+              )}
 
-            {activeStageIndex === 2 && (
-              /* 03 Discover: Authentic Variants & OC-DFG */
-              <ProductWindow
-                title="Variants Explorer & Execution Extraction"
-                viewLabel="Discovery"
-                caption="Analyze chevron execution patterns, variant support counts, and discover typed causal dependencies."
-                imageSrc={variantsImg}
-                imageAlt="Variants Explorer chevron diagrams across object type lanes"
-              />
-            )}
+              {activeStageIndex === 2 && (
+                /* 03 Discover: Authentic Variants & OC-DFG */
+                <ProductWindow
+                  title="Variants Explorer & Execution Extraction"
+                  viewLabel="Discovery"
+                  viewportClassName="h-[320px] sm:h-[360px]"
+                  caption="Analyze chevron execution patterns, variant support counts, and discover typed causal dependencies."
+                  imageSrc={variantsImg}
+                  imageAlt="Variants Explorer chevron diagrams across object type lanes"
+                />
+              )}
 
-            {activeStageIndex === 3 && (
-              /* 04 Shape: Model Editor & Layout */
-              <ProductWindow
-                title="Visual Model Editor"
-                viewLabel="OC-DFG & OCCN"
-                caption="Author and refine object-centric process models with automatic ELK layout, typed connections, undo/redo, and JSON exchange."
-                imageSrc={ocdfgImg}
-                imageAlt="Object-Centric Directly Follows Graph with typed arcs and start/end nodes"
-              />
-            )}
+              {activeStageIndex === 3 && (
+                /* 04 Shape: Model Editor & Layout */
+                <ProductWindow
+                  title="Visual Model Editor"
+                  viewLabel="OC-DFG & OCCN"
+                  viewportClassName="h-[320px] sm:h-[360px]"
+                  caption="Author and refine object-centric process models with automatic ELK layout, typed connections, undo/redo, and JSON exchange."
+                  imageSrc={ocdfgImg}
+                  imageAlt="Object-Centric Directly Follows Graph with typed arcs and start/end nodes"
+                />
+              )}
 
-            {activeStageIndex === 4 && (
-              /* 05 Check: Conformance replay states */
-              <ProductWindow
-                title="Conformance Checking & Replay Diagnostics"
-                viewLabel="OCCN / TOTeM Conformance"
-                caption="Replay concrete event units against the model. Inspect aggregate fitness and diagnose stopping points."
-              >
-                <div className="p-6 bg-white space-y-4">
-                  <div className="grid grid-cols-3 gap-3 text-center font-mono">
-                    <div className="p-3 rounded bg-emerald-50 border border-emerald-300 text-emerald-900">
-                      <div className="text-lg font-bold">142</div>
-                      <div className="text-xs font-semibold">Fitting Units</div>
-                      <div className="text-[10px] text-emerald-700 mt-1">Complete replay</div>
+              {activeStageIndex === 4 && (
+                /* 05 Check: Conformance replay states */
+                <ProductWindow
+                  title="Conformance Checking & Replay Diagnostics"
+                  viewLabel="OCCN / TOTeM Conformance"
+                  viewportClassName="h-[320px] sm:h-[360px]"
+                  caption="Replay concrete event units against the model. Inspect aggregate fitness and diagnose stopping points."
+                >
+                  <div className="h-full p-6 bg-white flex flex-col justify-center space-y-4">
+                    <div className="grid grid-cols-3 gap-3 text-center font-mono">
+                      <div className="p-3 rounded bg-emerald-50 border border-emerald-300 text-emerald-900">
+                        <div className="text-lg font-bold">142</div>
+                        <div className="text-xs font-semibold">Fitting Units</div>
+                        <div className="text-[10px] text-emerald-700 mt-1">Complete replay</div>
+                      </div>
+                      <div className="p-3 rounded bg-red-50 border border-red-300 text-red-900">
+                        <div className="text-lg font-bold">12</div>
+                        <div className="text-xs font-semibold">Non-Fitting</div>
+                        <div className="text-[10px] text-red-700 mt-1">Deviations proven</div>
+                      </div>
+                      <div className="p-3 rounded bg-amber-50 border border-amber-300 text-amber-900">
+                        <div className="text-lg font-bold">0</div>
+                        <div className="text-xs font-semibold">Inconclusive</div>
+                        <div className="text-[10px] text-amber-700 mt-1">Search bounded</div>
+                      </div>
                     </div>
-                    <div className="p-3 rounded bg-red-50 border border-red-300 text-red-900">
-                      <div className="text-lg font-bold">12</div>
-                      <div className="text-xs font-semibold">Non-Fitting</div>
-                      <div className="text-[10px] text-red-700 mt-1">Deviations proven</div>
-                    </div>
-                    <div className="p-3 rounded bg-amber-50 border border-amber-300 text-amber-900">
-                      <div className="text-lg font-bold">0</div>
-                      <div className="text-xs font-semibold">Inconclusive</div>
-                      <div className="text-[10px] text-amber-700 mt-1">Search bounded</div>
+                    <div className="p-3 rounded border border-neutral-200 bg-neutral-50 text-xs font-mono flex items-center justify-between">
+                      <span>Overall Replay Fitness:</span>
+                      <span className="font-bold text-sm text-black">92.2% (Coverage: 1.0)</span>
                     </div>
                   </div>
-                  <div className="p-3 rounded border border-neutral-200 bg-neutral-50 text-xs font-mono flex items-center justify-between">
-                    <span>Overall Replay Fitness:</span>
-                    <span className="font-bold text-sm text-black">92.2% (Coverage: 1.0)</span>
-                  </div>
-                </div>
-              </ProductWindow>
-            )}
+                </ProductWindow>
+              )}
 
-            {activeStageIndex === 5 && (
-              /* 06 Simulate: Playout & Variant Export */
-              <ProductWindow
-                title="Playout Simulation Engine"
-                viewLabel="Playout & Export"
-                caption="Enumerate distinct executions under explicit object and activity bounds, canonicalize symmetries, and export OCEL 2.0 logs."
-              >
-                <div className="p-6 bg-white space-y-4">
-                  <div className="flex items-center justify-between border-b pb-3">
-                    <div className="font-mono text-xs text-neutral-600">
-                      Playout State Space: <span className="font-bold text-black">Exhaustive</span>
+              {activeStageIndex === 5 && (
+                /* 06 Simulate: Playout & Variant Export */
+                <ProductWindow
+                  title="Playout Simulation Engine"
+                  viewLabel="Playout & Export"
+                  viewportClassName="h-[320px] sm:h-[360px]"
+                  caption="Enumerate distinct executions under explicit object and activity bounds, canonicalize symmetries, and export OCEL 2.0 logs."
+                >
+                  <div className="h-full p-6 bg-white flex flex-col justify-center space-y-4">
+                    <div className="flex items-center justify-between border-b pb-3">
+                      <div className="font-mono text-xs text-neutral-600">
+                        Playout State Space: <span className="font-bold text-black">Exhaustive</span>
+                      </div>
+                      <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                        Bounds: 2 Orders, 4 Items
+                      </span>
                     </div>
-                    <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                      Bounds: 2 Orders, 4 Items
-                    </span>
+                    <div className="p-3 rounded bg-neutral-50 border border-neutral-200 font-mono text-xs space-y-1.5">
+                      <div className="flex justify-between">
+                        <span className="text-neutral-500">Unique canonical variants:</span>
+                        <span className="font-bold text-black">18 variants</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-neutral-500">States explored:</span>
+                        <span className="text-neutral-800">1,240 states</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-neutral-500">Elapsed time:</span>
+                        <span className="text-neutral-800">84 ms</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="flex-1 text-center py-2 px-3 border border-neutral-300 rounded font-mono text-xs bg-white text-neutral-700">
+                        Export OCEL 2.0 (JSON)
+                      </div>
+                      <div className="flex-1 text-center py-2 px-3 border border-neutral-300 rounded font-mono text-xs bg-white text-neutral-700">
+                        Export Variants JSON
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-3 rounded bg-neutral-50 border border-neutral-200 font-mono text-xs space-y-1.5">
-                    <div className="flex justify-between">
-                      <span className="text-neutral-500">Unique canonical variants:</span>
-                      <span className="font-bold text-black">18 variants</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-neutral-500">States explored:</span>
-                      <span className="text-neutral-800">1,240 states</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-neutral-500">Elapsed time:</span>
-                      <span className="text-neutral-800">84 ms</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <div className="flex-1 text-center py-2 px-3 border border-neutral-300 rounded font-mono text-xs bg-white text-neutral-700">
-                      Export OCEL 2.0 (JSON)
-                    </div>
-                    <div className="flex-1 text-center py-2 px-3 border border-neutral-300 rounded font-mono text-xs bg-white text-neutral-700">
-                      Export Variants JSON
-                    </div>
-                  </div>
-                </div>
-              </ProductWindow>
-            )}
+                </ProductWindow>
+              )}
+            </div>
           </div>
         </div>
       </div>

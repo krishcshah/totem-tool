@@ -21,6 +21,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
   const [pinnedType, setPinnedType] = useState<string | null>(null);
   const [motionReduced, setMotionReduced] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true);
 
   // Micro-detail wordmark animation phase
   const [wordmarkPhase, setWordmarkPhase] = useState<"full" | "condensing" | "resolved">("full");
@@ -42,9 +43,29 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
     };
   }, []);
 
+  // Auto-cycle through the 4 threads every 2.5s until user hovers or clicks
+  useEffect(() => {
+    if (!isAutoPlaying || motionReduced) return;
+
+    const threadIds = ["order", "item", "package", "resource"];
+    const timer = setInterval(() => {
+      setActiveType((prev) => {
+        const nextIdx = prev ? (threadIds.indexOf(prev) + 1) % threadIds.length : 0;
+        const nextThread = threadIds[nextIdx];
+        onSelectThread?.(nextThread);
+        return nextThread;
+      });
+    }, 2500);
+
+    return () => clearInterval(timer);
+  }, [isAutoPlaying, motionReduced, onSelectThread]);
+
   const effectiveType = pinnedType || activeType;
 
   const handleTypeHover = (typeId: string | null) => {
+    if (typeId) {
+      setIsAutoPlaying(false);
+    }
     if (!pinnedType) {
       setActiveType(typeId);
       onSelectThread?.(typeId);
@@ -52,6 +73,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
   };
 
   const handleTypeClick = (typeId: string) => {
+    setIsAutoPlaying(false);
     const next = pinnedType === typeId ? null : typeId;
     setPinnedType(next);
     setActiveType(next);
