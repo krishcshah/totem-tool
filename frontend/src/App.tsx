@@ -1,22 +1,34 @@
-import React, { useState, useEffect } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React, { useState, useEffect, Suspense } from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { Login } from "./react_component/login";
-import { Logout } from "./react_component/logout";
-import { Title } from "./Title";
-import UploadView from "./UploadView";
 import { SelectedFileContext } from "./contexts/SelectedFileContext";
 import "./styles/app.css";
-import { ProcessOverview } from "./ProcessOverview";
 import { DashboardProvider } from "./contexts/DashboardContext";
-import { DeleteView } from "./DeleteView";
-import { SettingsView } from "./SettingsView";
 import { Toaster } from "sonner";
 import { SplashAnimation } from "./components/SplashAnimation";
 import { setBypassCache } from "./interceptors/axios";
 import { getUserSettings } from "./api/settingsApi";
 
 const LOCAL_MODE = Boolean(import.meta.env.VITE_LOCAL_MODE);
+
+// Code-split routes: the public landing page loads immediately without heavy analysis visualizers
+const LandingPage = React.lazy(() => import("./landing/LandingPage"));
+const ProcessOverview = React.lazy(() =>
+  import("./ProcessOverview").then((m) => ({ default: m.ProcessOverview }))
+);
+const UploadView = React.lazy(() => import("./UploadView"));
+const DeleteView = React.lazy(() =>
+  import("./DeleteView").then((m) => ({ default: m.DeleteView }))
+);
+const SettingsView = React.lazy(() =>
+  import("./SettingsView").then((m) => ({ default: m.SettingsView }))
+);
+const Login = React.lazy(() =>
+  import("./react_component/login").then((m) => ({ default: m.Login }))
+);
+const Logout = React.lazy(() =>
+  import("./react_component/logout").then((m) => ({ default: m.Logout }))
+);
 
 async function guestLogin() {
   const { data } = await axios.post(
@@ -30,7 +42,8 @@ async function guestLogin() {
   if (data.refresh) localStorage.setItem("refresh_token", data.refresh);
 }
 
-function AppRoutes({ selectedFile, setSelectedFile }) {
+function AppRoutes({ selectedFile, setSelectedFile }: any) {
+  const location = useLocation();
   const [ready, setReady] = useState(!LOCAL_MODE);
   // Splash plays on every mount — including dev — until dismissed. Press Esc
   // or click anywhere to skip.
@@ -39,6 +52,9 @@ function AppRoutes({ selectedFile, setSelectedFile }) {
   const handleSplashComplete = () => {
     setSplashDone(true);
   };
+
+  // Do not obscure the marketing landing page with the blocking app splash
+  const isLandingRoute = location.pathname === "/" || location.pathname === "/title";
 
   useEffect(() => {
     if (!LOCAL_MODE) return;
@@ -102,33 +118,45 @@ function AppRoutes({ selectedFile, setSelectedFile }) {
   return (
     <SelectedFileContext.Provider value={{ selectedFile, setSelectedFile }}>
       <DashboardProvider>
-        <div className="website-background">
+        <div className={isLandingRoute ? "w-full min-h-screen bg-[#F7F7F2]" : "website-background"}>
           <Toaster position="top-center" richColors />
-          {!splashDone && (
+          {!splashDone && !isLandingRoute && (
             <SplashAnimation onComplete={handleSplashComplete} />
           )}
 
-          <Routes>
-            <Route
-              path="/title"
-              element={LOCAL_MODE ? <Navigate to="/upload" replace /> : <Title />}
-            />
-            <Route
-              path="/login"
-              element={LOCAL_MODE ? <Navigate to="/upload" replace /> : <Login />}
-            />
-            <Route path="/logout" element={<Logout />} />
-            <Route path="/upload" element={<UploadView />} />
-            <Route path="/overview" element={<ProcessOverview />} />
-            <Route path="/userdatadelete" element={<DeleteView />} />
-            <Route path="/settings" element={<SettingsView />} />
-            <Route
-              path="/"
-              element={
-                <Navigate to={LOCAL_MODE ? "/upload" : "/title"} replace />
-              }
-            />
-          </Routes>
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center min-h-[60vh] font-mono text-xs text-neutral-500">
+                Loading...
+              </div>
+            }
+          >
+            <Routes>
+              <Route
+                path="/title"
+                element={LOCAL_MODE ? <Navigate to="/upload" replace /> : <LandingPage />}
+              />
+              <Route
+                path="/login"
+                element={LOCAL_MODE ? <Navigate to="/upload" replace /> : <Login />}
+              />
+              <Route path="/logout" element={<Logout />} />
+              <Route path="/upload" element={<UploadView />} />
+              <Route path="/overview" element={<ProcessOverview />} />
+              <Route path="/userdatadelete" element={<DeleteView />} />
+              <Route path="/settings" element={<SettingsView />} />
+              <Route
+                path="/"
+                element={
+                  LOCAL_MODE ? (
+                    <Navigate to="/upload" replace />
+                  ) : (
+                    <LandingPage />
+                  )
+                }
+              />
+            </Routes>
+          </Suspense>
         </div>
       </DashboardProvider>
     </SelectedFileContext.Provider>

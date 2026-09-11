@@ -3,15 +3,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
-html, body, #root {
-  height: 100%;
+html, body {
+  min-height: 100%;
   margin: 0;
   padding: 0;
-
 }
 
 #root {
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .debug-grid {

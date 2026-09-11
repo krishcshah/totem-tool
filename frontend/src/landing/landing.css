@@ -1,0 +1,105 @@
+/* Scoped styling for the bespoke TOTeM landing page */
+
+:root {
+  --landing-paper: #F7F7F2;
+  --landing-surface: #FFFFFF;
+  --landing-ink: #0B0D0F;
+  --landing-muted: #525252;
+  --landing-border: #E4E4E7;
+  --landing-theater: #0D1014;
+  --landing-theater-surface: #14181F;
+  --landing-theater-border: #232B36;
+  --landing-theater-muted: #94A3B8;
+
+  --thread-order: #2563EB;
+  --thread-item: #8B5CF6;
+  --thread-package: #0D9488;
+  --thread-resource: #D97706;
+}
+
+.totem-landing-root {
+  background-color: var(--landing-paper);
+  color: var(--landing-ink);
+  font-family: var(--font-sans);
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Accessible skip to content link */
+.totem-skip-link {
+  position: absolute;
+  top: -999px;
+  left: 1rem;
+  background: var(--landing-ink);
+  color: #FFFFFF;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  z-index: 10000;
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: top 0.2s ease;
+}
+
+.totem-skip-link:focus {
+  top: 1rem;
+  outline: 2px solid var(--thread-order);
+}
+
+/* Section scroll margins so anchor jumps clear sticky nav */
+.totem-section-target {
+  scroll-margin-top: 5.5rem;
+}
+
+/* Architectural grid backdrop */
+.totem-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(11, 13, 15, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 13, 15, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.totem-theater-grid-bg {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Subtle dash animation for living threads */
+@keyframes thread-flow {
+  from {
+    stroke-dashoffset: 40;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-thread-pulse {
+  stroke-dasharray: 6 6;
+  animation: thread-flow 3s linear infinite;
+}
+
+/* Dark analysis theater surface */
+.totem-theater-surface {
+  background-color: var(--landing-theater);
+  color: #F8FAFC;
+}
+
+/* Responsive measure rules */
+.totem-measure {
+  max-width: 65ch;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-thread-pulse,
+  .totem-landing-root * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
