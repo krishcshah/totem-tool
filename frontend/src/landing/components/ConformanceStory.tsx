@@ -22,20 +22,22 @@ export const ConformanceStory: React.FC = () => {
         </div>
 
         {/* 3-Column Replay Status Categorization */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 items-stretch">
           {/* Fitting Card */}
-          <div className="rounded-xl border-2 border-emerald-500/30 bg-white p-6 shadow-xs relative overflow-hidden">
-            <div className="flex items-center gap-2.5 mb-3 text-emerald-800 font-semibold">
-              <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-              <span className="font-mono text-sm tracking-wide">Fitting</span>
-              <span className="ml-auto text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
-                100% Valid
-              </span>
+          <div className="rounded-xl border-2 border-emerald-500/30 bg-white p-6 shadow-xs relative overflow-hidden h-full flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2.5 mb-3 text-emerald-800 font-semibold">
+                <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                <span className="font-mono text-sm tracking-wide">Fitting</span>
+                <span className="ml-auto text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">
+                  100% Valid
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans">
+                At least one complete binding sequence reaches completion without violating
+                cardinalities or obligations.
+              </p>
             </div>
-            <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans">
-              At least one complete binding sequence reaches completion without violating
-              cardinalities or obligations.
-            </p>
             <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between text-[11px] font-mono text-neutral-400">
               <span>Status: Proven</span>
               <span className="text-emerald-700 font-bold">● Valid execution</span>
@@ -43,18 +45,20 @@ export const ConformanceStory: React.FC = () => {
           </div>
 
           {/* Non-Fitting Card */}
-          <div className="rounded-xl border-2 border-red-500/30 bg-white p-6 shadow-xs relative overflow-hidden">
-            <div className="flex items-center gap-2.5 mb-3 text-red-800 font-semibold">
-              <XCircle className="w-5 h-5 text-red-600" />
-              <span className="font-mono text-sm tracking-wide">Non-fitting</span>
-              <span className="ml-auto text-[10px] font-mono px-2 py-0.5 rounded bg-red-100 text-red-800">
-                Deviation
-              </span>
+          <div className="rounded-xl border-2 border-red-500/30 bg-white p-6 shadow-xs relative overflow-hidden h-full flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2.5 mb-3 text-red-800 font-semibold">
+                <XCircle className="w-5 h-5 text-red-600" />
+                <span className="font-mono text-sm tracking-wide">Non-fitting</span>
+                <span className="ml-auto text-[10px] font-mono px-2 py-0.5 rounded bg-red-100 text-red-800">
+                  Deviation
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans">
+                Exhaustive replay shows that no complete sequence matches the observed unit;
+                first failure activity is pinpointed.
+              </p>
             </div>
-            <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans">
-              Exhaustive replay shows that no complete sequence matches the observed unit;
-              first failure activity is pinpointed.
-            </p>
             <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between text-[11px] font-mono text-neutral-400">
               <span>Status: Deviation</span>
               <span className="text-red-700 font-bold">■ Halting state</span>
@@ -62,18 +66,20 @@ export const ConformanceStory: React.FC = () => {
           </div>
 
           {/* Inconclusive Card */}
-          <div className="rounded-xl border-2 border-amber-500/30 bg-white p-6 shadow-xs relative overflow-hidden">
-            <div className="flex items-center gap-2.5 mb-3 text-amber-800 font-semibold">
-              <HelpCircle className="w-5 h-5 text-amber-600" />
-              <span className="font-mono text-sm tracking-wide">Inconclusive</span>
-              <span className="ml-auto text-[10px] font-mono px-2 py-0.5 rounded bg-amber-100 text-amber-800">
-                Search bound
-              </span>
+          <div className="rounded-xl border-2 border-amber-500/30 bg-white p-6 shadow-xs relative overflow-hidden h-full flex flex-col justify-between">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2.5 mb-3 text-amber-800 font-semibold">
+                <HelpCircle className="w-5 h-5 text-amber-600" />
+                <span className="font-mono text-sm tracking-wide">Inconclusive</span>
+                <span className="ml-auto text-[10px] font-mono px-2 py-0.5 rounded bg-amber-100 text-amber-800">
+                  Search bound
+                </span>
+              </div>
+              <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans">
+                The configured search bound was reached before an outcome was proven.
+                Presented transparently alongside coverage.
+              </p>
             </div>
-            <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-sans">
-              The configured search bound was reached before an outcome was proven.
-              Presented transparently alongside coverage.
-            </p>
             <div className="mt-4 pt-3 border-t border-neutral-100 flex items-center justify-between text-[11px] font-mono text-neutral-400">
               <span>Status: Bounded</span>
               <span className="text-amber-700 font-bold">▲ State cap hit</span>

@@ -113,7 +113,7 @@ export const LandingPage: React.FC = () => {
                 {TRUST_STRIP.map((item) => (
                   <div
                     key={item.label}
-                    className="p-3 bg-white/70 backdrop-blur-xs border border-neutral-200 rounded-lg text-left shadow-2xs"
+                    className="p-3 bg-white/70 backdrop-blur-xs border border-neutral-200 rounded-lg text-left shadow-2xs h-full flex flex-col justify-center"
                   >
                     <div className="text-xs font-mono font-bold text-neutral-800 flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-neutral-400" />

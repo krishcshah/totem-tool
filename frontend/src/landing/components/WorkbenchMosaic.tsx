@@ -25,24 +25,28 @@ export const WorkbenchMosaic: React.FC = () => {
         </div>
 
         {/* Bento Grid Workbench Layout */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 mb-16 items-stretch">
           {/* Card 1: Variants Explorer Preview (Span 7) */}
-          <div className="md:col-span-7 flex flex-col">
+          <div className="md:col-span-7 flex flex-col h-full">
             <ProductWindow
               title="Variants Explorer"
               viewLabel="GridStack Widget"
               imageSrc={variantsImg}
               imageAlt="Variants Explorer widget inside dashboard"
               caption="Drag-and-drop variant explorer with automatic frequency sorting and chevron representations."
+              className="h-full flex flex-col"
+              viewportClassName="h-[280px] sm:h-[320px]"
             />
           </div>
 
           {/* Card 2: Log Statistics Widget (Span 5) */}
-          <div className="md:col-span-5 flex flex-col">
+          <div className="md:col-span-5 flex flex-col h-full">
             <ProductWindow
               title="Log Statistics"
               viewLabel="GridStack Widget"
               caption="Event, object, activity, and duration counts updated instantaneously with global filters."
+              className="h-full flex flex-col"
+              viewportClassName="h-[280px] sm:h-[320px]"
             >
               <div className="h-full p-4 bg-white flex flex-col justify-between font-mono">
                 <div className="grid grid-cols-2 gap-2 text-xs">

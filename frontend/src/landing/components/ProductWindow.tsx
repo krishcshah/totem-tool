@@ -72,7 +72,7 @@ export const ProductWindow: React.FC<ProductWindowProps> = ({
         className={`relative w-full overflow-hidden bg-neutral-900/5 ${
           viewportClassName
             ? `${viewportClassName} flex items-center justify-center`
-            : ""
+            : "flex-1 flex items-center justify-center"
         }`}
       >
         {imageSrc ? (
@@ -94,7 +94,7 @@ export const ProductWindow: React.FC<ProductWindowProps> = ({
 
       {caption && (
         <figcaption
-          className={`px-3 py-2 text-xs border-t font-sans leading-relaxed min-h-[44px] flex items-center ${
+          className={`px-3 py-2 text-xs border-t font-sans leading-relaxed min-h-[48px] flex items-center shrink-0 ${
             dark
               ? "bg-[#0D1014]/60 border-[#242B35] text-slate-400"
               : "bg-neutral-50/50 border-[#E4E4E7] text-neutral-600"

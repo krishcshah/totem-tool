@@ -30,11 +30,11 @@ export const ResearchSection: React.FC = () => {
         </div>
 
         {/* Research Publication Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16 items-stretch">
           {RESEARCH_CITATIONS.map((paper) => (
             <article
               key={paper.title}
-              className="rounded-xl border border-[#E4E4E7] bg-[#F7F7F2] p-6 shadow-xs flex flex-col justify-between"
+              className="rounded-xl border border-[#E4E4E7] bg-[#F7F7F2] p-6 shadow-xs flex flex-col justify-between h-full"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between text-xs font-mono text-neutral-500">
