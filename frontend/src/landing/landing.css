@@ -52,6 +52,18 @@
   scroll-margin-top: 4.25rem;
 }
 
+/* Hide scrollbars while maintaining scrollability across all browsers */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important; /* IE and Edge */
+  scrollbar-width: none !important; /* Firefox */
+}
+
 /* Architectural grid backdrop */
 .totem-grid-bg {
   background-image:

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { WORKFLOW_STAGES } from "../content";
 import { ProductWindow } from "./ProductWindow";
 import { useInactivityResume } from "../hooks/useInactivityResume";
@@ -11,6 +11,72 @@ import ocdfgImg from "@/images/ocdfg-preview.png";
 export const WorkflowStory: React.FC = () => {
   const [activeStageIndex, setActiveStageIndex] = useState(0);
   const { isAutoPlaying, pauseAutoPlay } = useInactivityResume(true, 30000);
+  const tabsContainerRef = useRef<HTMLDivElement | null>(null);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+
+  // Update left and right scroll overflow indicators
+  const updateScrollState = useCallback(() => {
+    const el = tabsContainerRef.current;
+    if (!el) return;
+    const maxScrollLeft = el.scrollWidth - el.clientWidth;
+    const hasOverflow = maxScrollLeft > 2;
+    setCanScrollLeft(hasOverflow && el.scrollLeft > 6);
+    setCanScrollRight(hasOverflow && el.scrollLeft < maxScrollLeft - 6);
+  }, []);
+
+  useEffect(() => {
+    const el = tabsContainerRef.current;
+    if (!el) return;
+
+    updateScrollState();
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    window.addEventListener("resize", updateScrollState, { passive: true });
+
+    return () => {
+      el.removeEventListener("scroll", updateScrollState);
+      window.removeEventListener("resize", updateScrollState);
+    };
+  }, [updateScrollState]);
+
+  // Keep active tab centered and fully inside mobile view as it auto-cycles or changes
+  useEffect(() => {
+    const container = tabsContainerRef.current;
+    const activeTab = tabRefs.current[activeStageIndex];
+    if (!container || !activeTab) return;
+
+    const containerWidth = container.clientWidth;
+    const scrollWidth = container.scrollWidth;
+
+    if (scrollWidth <= containerWidth) return;
+
+    const tabLeft = activeTab.offsetLeft;
+    const tabWidth = activeTab.clientWidth;
+    const tabRight = tabLeft + tabWidth;
+    const currentScroll = container.scrollLeft;
+
+    // When looping back to first stage, scroll smoothly all the way to start
+    if (activeStageIndex === 0) {
+      container.scrollTo({ left: 0, behavior: "smooth" });
+      return;
+    }
+
+    // Edge margin so tab is never obscured by the blur effect or clipped by screen edge
+    const edgeMargin = 56;
+    const isClippedRight = tabRight > currentScroll + containerWidth - edgeMargin;
+    const isClippedLeft = tabLeft < currentScroll + edgeMargin;
+
+    if (isClippedRight || isClippedLeft) {
+      const targetScroll = tabLeft - (containerWidth - tabWidth) / 2;
+      const boundedScroll = Math.max(0, Math.min(targetScroll, scrollWidth - containerWidth));
+
+      container.scrollTo({
+        left: boundedScroll,
+        behavior: "smooth",
+      });
+    }
+  }, [activeStageIndex]);
 
   // Auto-circulate stages on 2.5-second intervals until user interacts
   useEffect(() => {
@@ -63,32 +129,72 @@ export const WorkflowStory: React.FC = () => {
           </p>
         </div>
 
-        {/* Stage Selector Tabs (Sticky / Interactive on desktop and tablet) */}
-        <div className="mb-8 flex overflow-x-auto pb-2 gap-2 border-b border-neutral-300/80 no-scrollbar">
-          {WORKFLOW_STAGES.map((stage, idx) => {
-            const isSelected = activeStageIndex === idx;
-            return (
-              <button
-                key={stage.number}
-                type="button"
-                onClick={() => handleStageSelect(idx)}
-                className={`relative px-4 py-2.5 rounded-lg text-left transition-all shrink-0 cursor-pointer overflow-hidden ${
-                  isSelected
-                    ? "bg-white text-black shadow-xs border border-neutral-300 font-semibold"
-                    : "text-neutral-500 hover:text-black hover:bg-black/5 border border-transparent font-medium"
-                }`}
-                aria-pressed={isSelected}
-              >
-                <div className="font-mono text-[11px] text-neutral-400">{stage.number}</div>
-                <div className="text-xs font-sans whitespace-nowrap">{stage.tag}</div>
+        {/* Stage Selector Tabs with smooth auto-scroll & frosted blur indicators */}
+        <div className="relative mb-8">
+          {/* Left blur / gradient fade overlay (reveals as tabs scroll right) */}
+          <div
+            className={`pointer-events-none absolute left-0 top-0 bottom-2 w-12 sm:w-16 z-10 transition-opacity duration-300 ${
+              canScrollLeft ? "opacity-100" : "opacity-0"
+            }`}
+            style={{
+              background:
+                "linear-gradient(to right, #F7F7F2 20%, rgba(247, 247, 242, 0.85) 60%, transparent 100%)",
+              backdropFilter: "blur(3px)",
+              WebkitBackdropFilter: "blur(3px)",
+              maskImage: "linear-gradient(to right, black 40%, transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to right, black 40%, transparent 100%)",
+            }}
+            aria-hidden="true"
+          />
 
-                {/* Animated 2.5s progress bar on the active tab while auto-playing */}
-                {isSelected && isAutoPlaying && (
-                  <div className="absolute bottom-0 left-0 h-0.5 bg-blue-600 animate-tab-progress" />
-                )}
-              </button>
-            );
-          })}
+          {/* Right blur / gradient fade overlay (suggests more content lies to the right) */}
+          <div
+            className={`pointer-events-none absolute right-0 top-0 bottom-2 w-14 sm:w-20 z-10 transition-opacity duration-300 ${
+              canScrollRight ? "opacity-100" : "opacity-0"
+            }`}
+            style={{
+              background:
+                "linear-gradient(to left, #F7F7F2 20%, rgba(247, 247, 242, 0.85) 60%, transparent 100%)",
+              backdropFilter: "blur(3px)",
+              WebkitBackdropFilter: "blur(3px)",
+              maskImage: "linear-gradient(to left, black 40%, transparent 100%)",
+              WebkitMaskImage: "linear-gradient(to left, black 40%, transparent 100%)",
+            }}
+            aria-hidden="true"
+          />
+
+          <div
+            ref={tabsContainerRef}
+            className="flex overflow-x-auto pb-2 gap-2 border-b border-neutral-300/80 no-scrollbar scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {WORKFLOW_STAGES.map((stage, idx) => {
+              const isSelected = activeStageIndex === idx;
+              return (
+                <button
+                  key={stage.number}
+                  ref={(el) => {
+                    tabRefs.current[idx] = el;
+                  }}
+                  type="button"
+                  onClick={() => handleStageSelect(idx)}
+                  className={`relative px-4 py-2.5 rounded-lg text-left transition-all shrink-0 cursor-pointer overflow-hidden ${
+                    isSelected
+                      ? "bg-white text-black shadow-xs border border-neutral-300 font-semibold"
+                      : "text-neutral-500 hover:text-black hover:bg-black/5 border border-transparent font-medium"
+                  }`}
+                  aria-pressed={isSelected}
+                >
+                  <div className="font-mono text-[11px] text-neutral-400">{stage.number}</div>
+                  <div className="text-xs font-sans whitespace-nowrap">{stage.tag}</div>
+
+                  {/* Animated 2.5s progress bar on the active tab while auto-playing */}
+                  {isSelected && isAutoPlaying && (
+                    <div className="absolute bottom-0 left-0 h-0.5 bg-blue-600 animate-tab-progress" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Dynamic Stage Visual & Detail Row — Fixed height container to prevent layout jumping */}
