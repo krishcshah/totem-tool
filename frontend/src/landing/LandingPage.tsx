@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
 import { ArrowRight, Github } from "lucide-react";
 import { LandingNav } from "./components/LandingNav";
 import { HeroProcessMap } from "./components/HeroProcessMap";
@@ -17,33 +16,21 @@ import { TRUST_STRIP, GITHUB_REPO_URL } from "./content";
 import "./landing.css";
 
 export const LandingPage: React.FC = () => {
-  const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   useEffect(() => {
     // Dynamic SEO title
     const originalTitle = document.title;
     document.title = "TOTeM — Object-Centric Process Mining";
-
-    const token = localStorage.getItem("access_token");
-    setIsAuthenticated(Boolean(token));
 
     return () => {
       document.title = originalTitle;
     };
   }, []);
 
-  const handlePrimaryCta = () => {
-    if (isAuthenticated) {
-      navigate("/upload");
-    } else {
-      navigate("/login");
-    }
-  };
-
   const handleScrollToWorkflow = () => {
     const el = document.getElementById("workflow");
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   return (
@@ -90,14 +77,16 @@ export const LandingPage: React.FC = () => {
 
               {/* Primary Actions */}
               <div className="flex flex-wrap items-center justify-center gap-3.5 pt-2">
-                <button
-                  type="button"
-                  onClick={handlePrimaryCta}
+                <a
+                  href={GITHUB_REPO_URL}
+                  target="_blank"
+                  rel="noreferrer"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#0B0D0F] hover:bg-neutral-800 text-white text-sm font-semibold shadow-xs transition hover:shadow-md cursor-pointer focus-visible:outline-2 focus-visible:outline-black"
                 >
-                  <span>{isAuthenticated ? "Open workspace" : "Open TOTeM"}</span>
+                  <Github className="w-4 h-4" />
+                  <span>Explore on GitHub</span>
                   <ArrowRight className="w-4 h-4" />
-                </button>
+                </a>
 
                 <button
                   type="button"
@@ -108,13 +97,14 @@ export const LandingPage: React.FC = () => {
                 </button>
 
                 <a
-                  href={GITHUB_REPO_URL}
-                  target="_blank"
-                  rel="noreferrer"
+                  href="#faq"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById("faq")?.scrollIntoView({ behavior: "smooth" });
+                  }}
                   className="inline-flex items-center gap-1.5 px-3 py-3 text-sm font-mono text-neutral-600 hover:text-black transition"
                 >
-                  <Github className="w-4 h-4" />
-                  <span>View source</span>
+                  <span>Documentation & FAQ</span>
                 </a>
               </div>
 
@@ -123,52 +113,55 @@ export const LandingPage: React.FC = () => {
                 {TRUST_STRIP.map((item) => (
                   <div
                     key={item.label}
-                    className="p-2.5 rounded-lg border border-[#E4E4E7] bg-white/80 backdrop-blur-xs text-left"
+                    className="p-3 bg-white/70 backdrop-blur-xs border border-neutral-200 rounded-lg text-left shadow-2xs"
                   >
-                    <div className="font-mono text-xs font-bold text-black">{item.label}</div>
-                    <div className="text-[11px] text-neutral-500 font-sans">{item.detail}</div>
+                    <div className="text-xs font-mono font-bold text-neutral-800 flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-neutral-400" />
+                      {item.label}
+                    </div>
+                    <div className="text-[11px] text-neutral-500 font-sans mt-0.5">
+                      {item.detail}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Bespoke Hero Visual: Living Event-Object Map */}
-            <div className="max-w-5xl mx-auto">
-              <HeroProcessMap />
-            </div>
+            {/* Living Process Map Inline SVG */}
+            <HeroProcessMap />
           </div>
         </section>
 
         {/* SECTION 3 — WHY OBJECT-CENTRIC */}
         <ObjectCentricComparison />
 
-        {/* SECTION 4 — END-TO-END WORKFLOW */}
+        {/* SECTION 4 — 6-STAGE WORKFLOW */}
         <WorkflowStory />
 
-        {/* SECTION 5 — PROCESS AREAS AND RESOURCE-AWARE VARIANTS */}
+        {/* SECTION 5 — PROCESS AREA DECOMPOSITION (Dark Theater) */}
         <ProcessAreaStory />
 
-        {/* SECTION 6 — MODEL FAMILY & LOG EDITOR */}
+        {/* SECTION 6 — 4 MODEL FORMALISMS & OCEL EDITOR */}
         <ModelLanguageTabs />
 
-        {/* SECTION 7 — CONFORMANCE STORY */}
+        {/* SECTION 7 — CONFORMANCE & DIAGNOSTICS */}
         <ConformanceStory />
 
-        {/* SECTION 8 — CUSTOM WORKBENCH MOSAIC & DUCKDB SQL */}
+        {/* SECTION 8 — WORKBENCH BENTO & DUCKDB SQL */}
         <WorkbenchMosaic />
 
-        {/* SECTION 9 — PLAYOUT & SIMULATION */}
+        {/* SECTION 9 — PLAYOUT SIMULATION */}
         <PlayoutStory />
 
-        {/* SECTION 10 — ARCHITECTURE, OPEN SOURCE, AND RESEARCH */}
+        {/* SECTION 10 — RESEARCH & CITATIONS */}
         <ResearchSection />
 
-        {/* SECTION 11 — FAQ */}
+        {/* SECTION 11 — FAQ ACCORDION */}
         <LandingFaq />
-      </main>
 
-      {/* SECTION 12 & 13 — FINAL CTA & FOOTER */}
-      <LandingFooter />
+        {/* SECTION 12 & 13 — FINAL CTA & FOOTER */}
+        <LandingFooter />
+      </main>
     </div>
   );
 };

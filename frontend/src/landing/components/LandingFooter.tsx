@@ -1,26 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 import { TotemMark } from "./TotemMark";
 import { GITHUB_REPO_URL, LANDING_NAV_LINKS } from "../content";
 import { ArrowRight, Github, Download, BookOpen, Scale } from "lucide-react";
 
 export const LandingFooter: React.FC = () => {
-  const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const currentYear = new Date().getFullYear();
-
-  useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    setIsAuthenticated(Boolean(token));
-  }, []);
-
-  const handlePrimaryCta = () => {
-    if (isAuthenticated) {
-      navigate("/upload");
-    } else {
-      navigate("/login");
-    }
-  };
 
   // Optional desktop download URL from environment
   const desktopDownloadUrl = import.meta.env.VITE_DESKTOP_DOWNLOAD_URL;
@@ -56,23 +40,26 @@ export const LandingFooter: React.FC = () => {
 
           {/* Action CTAs */}
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <button
-              type="button"
-              onClick={handlePrimaryCta}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#0B0D0F] hover:bg-neutral-800 text-white text-sm font-semibold shadow-sm transition hover:shadow-md cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
-            >
-              <span>{isAuthenticated ? "Open workspace" : "Open TOTeM"}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-
             <a
               href={GITHUB_REPO_URL}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white hover:bg-neutral-50 text-neutral-800 text-sm font-semibold border border-neutral-300 shadow-2xs transition"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#0B0D0F] hover:bg-neutral-800 text-white text-sm font-semibold shadow-sm transition hover:shadow-md cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
             >
               <Github className="w-4 h-4" />
-              <span>Explore the source</span>
+              <span>Explore on GitHub</span>
+              <ArrowRight className="w-4 h-4" />
+            </a>
+
+            <a
+              href="#why"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById("why")?.scrollIntoView({ behavior: "smooth" });
+              }}
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-white hover:bg-neutral-50 text-neutral-800 text-sm font-semibold border border-neutral-300 shadow-2xs transition cursor-pointer"
+            >
+              <span>Why Object-Centric?</span>
             </a>
 
             {/* Conditional Desktop Download */}
@@ -146,7 +133,7 @@ export const LandingFooter: React.FC = () => {
             © {currentYear} Lukas Liss & contributors · RWTH Aachen University Chair of Process and Data Science (PADS)
           </div>
           <div>
-            Native OCEL 2.0 · DuckDB Core · React 19 · Django REST
+            Native OCEL 2.0 · DuckDB Core · React 19 · Python totem-lib
           </div>
         </div>
       </div>

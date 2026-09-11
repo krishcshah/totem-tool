@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, Github, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Menu, X, Github, ArrowRight, Download } from "lucide-react";
 import { TotemMark } from "./TotemMark";
 import { LANDING_NAV_LINKS, GITHUB_REPO_URL } from "../content";
 
 export const LandingNav: React.FC = () => {
-  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    setIsAuthenticated(Boolean(token));
-  }, []);
+  const desktopDownloadUrl = import.meta.env.VITE_DESKTOP_DOWNLOAD_URL;
 
   // Scroll listener for sticky elevation and active section spy
   useEffect(() => {
@@ -54,14 +49,6 @@ export const LandingNav: React.FC = () => {
     };
   }, []);
 
-  const handlePrimaryCta = () => {
-    if (isAuthenticated) {
-      navigate("/upload");
-    } else {
-      navigate("/login");
-    }
-  };
-
   const handleNavClick = (href: string) => {
     setMobileMenuOpen(false);
     const id = href.replace("#", "");
@@ -99,11 +86,10 @@ export const LandingNav: React.FC = () => {
           </Link>
         </div>
 
-        {/* Center: Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-1 xl:gap-2" aria-label="Main Navigation">
+        {/* Center: Desktop navigation links */}
+        <nav className="hidden md:flex items-center gap-1" aria-label="Main Navigation">
           {LANDING_NAV_LINKS.map((item) => {
-            const id = item.href.replace("#", "");
-            const isActive = activeSection === id;
+            const isActive = activeSection === item.href.replace("#", "");
             return (
               <a
                 key={item.href}
@@ -112,12 +98,11 @@ export const LandingNav: React.FC = () => {
                   e.preventDefault();
                   handleNavClick(item.href);
                 }}
-                className={`px-3 py-1.5 text-sm font-medium transition-colors rounded-md ${
+                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   isActive
                     ? "text-[#0B0D0F] font-semibold bg-black/5"
-                    : "text-neutral-600 hover:text-[#0B0D0F] hover:bg-black/5"
+                    : "text-neutral-600 hover:text-black hover:bg-black/5"
                 }`}
-                aria-current={isActive ? "page" : undefined}
               >
                 {item.label}
               </a>
@@ -127,36 +112,46 @@ export const LandingNav: React.FC = () => {
 
         {/* Right: Actions */}
         <div className="hidden sm:flex items-center gap-3">
+          {/* Conditional Desktop Installer Download */}
+          {desktopDownloadUrl && (
+            <a
+              href={desktopDownloadUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-neutral-700 hover:text-black border border-[#E4E4E7] bg-white rounded-md transition hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-blue-600"
+              aria-label="Download Desktop application (opens in new tab)"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>Download Desktop</span>
+            </a>
+          )}
+
+          {/* Primary CTA: Open GitHub */}
           <a
             href={GITHUB_REPO_URL}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono text-neutral-700 hover:text-black border border-[#E4E4E7] bg-white rounded-md transition hover:bg-neutral-50 focus-visible:outline-2 focus-visible:outline-blue-600"
-            aria-label="TOTeM source code on GitHub (opens in new tab)"
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold text-white bg-[#0B0D0F] hover:bg-neutral-800 rounded-md shadow-xs transition hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black cursor-pointer"
+            aria-label="Explore TOTeM on GitHub (opens in new tab)"
           >
             <Github className="w-3.5 h-3.5" />
             <span>GitHub</span>
-          </a>
-
-          <button
-            type="button"
-            onClick={handlePrimaryCta}
-            className="inline-flex items-center gap-1.5 px-4 py-1.5 text-xs font-semibold text-white bg-[#0B0D0F] hover:bg-neutral-800 rounded-md shadow-xs transition hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black cursor-pointer"
-          >
-            <span>{isAuthenticated ? "Open workspace" : "Open TOTeM"}</span>
             <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          </a>
         </div>
 
         {/* Mobile menu trigger */}
         <div className="flex sm:hidden items-center gap-2">
-          <button
-            type="button"
-            onClick={handlePrimaryCta}
-            className="inline-flex items-center px-3 py-1 text-xs font-medium text-white bg-[#0B0D0F] rounded-md"
+          <a
+            href={GITHUB_REPO_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1 px-3 py-1 text-xs font-medium text-white bg-[#0B0D0F] rounded-md"
+            aria-label="Explore TOTeM on GitHub (opens in new tab)"
           >
-            {isAuthenticated ? "Workspace" : "Open"}
-          </button>
+            <Github className="w-3.5 h-3.5" />
+            <span>GitHub</span>
+          </a>
           <button
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -192,22 +187,13 @@ export const LandingNav: React.FC = () => {
               href={GITHUB_REPO_URL}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center justify-center gap-2 px-3 py-2 text-xs font-mono text-neutral-800 bg-white border border-neutral-300 rounded-md"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-[#0B0D0F] rounded-md shadow-xs"
+              aria-label="Explore TOTeM on GitHub (opens in new tab)"
             >
               <Github className="w-4 h-4" />
-              <span>View Source on GitHub</span>
-            </a>
-            <button
-              type="button"
-              onClick={() => {
-                setMobileMenuOpen(false);
-                handlePrimaryCta();
-              }}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-white bg-[#0B0D0F] rounded-md shadow-xs"
-            >
-              <span>{isAuthenticated ? "Open workspace" : "Open TOTeM"}</span>
+              <span>Explore on GitHub</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </a>
           </div>
         </div>
       )}

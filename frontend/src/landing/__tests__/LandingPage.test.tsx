@@ -51,28 +51,20 @@ describe("LandingPage Component Tests", () => {
     expect(mainGithubLink.getAttribute("href")).toBe("https://github.com/LukasLiss/totem-tool");
   });
 
-  it("shows 'Open TOTeM' when unauthenticated and leads to login", () => {
+  it("renders prominent GitHub CTA links that direct users to the repository", () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
         <LandingPage />
       </MemoryRouter>
     );
 
-    const ctaButtons = screen.getAllByRole("button", { name: /open totem/i });
-    expect(ctaButtons.length).toBeGreaterThan(0);
-  });
-
-  it("shows 'Open workspace' when an access token is stored in localStorage", () => {
-    localStorage.setItem("access_token", "fake-jwt-token");
-
-    render(
-      <MemoryRouter initialEntries={["/"]}>
-        <LandingPage />
-      </MemoryRouter>
-    );
-
-    const workspaceButtons = screen.getAllByRole("button", { name: /open workspace/i });
-    expect(workspaceButtons.length).toBeGreaterThan(0);
+    const ctaLinks = screen.getAllByRole("link", { name: /explore on github|github/i });
+    expect(ctaLinks.length).toBeGreaterThan(0);
+    ctaLinks.forEach((link) => {
+      expect(link.getAttribute("href")).toBe("https://github.com/LukasLiss/totem-tool");
+      expect(link.getAttribute("target")).toBe("_blank");
+      expect(link.getAttribute("rel")).toContain("noreferrer");
+    });
   });
 
   it("operates model formalisms tablist with keyboard arrow keys", () => {
@@ -170,9 +162,9 @@ describe("LandingPage Component Tests", () => {
       </MemoryRouter>
     );
 
-    const downloadLink = screen.getByRole("link", { name: /download desktop/i });
-    expect(downloadLink).toBeTruthy();
-    expect(downloadLink.getAttribute("href")).toBe(
+    const downloadLinks = screen.getAllByRole("link", { name: /download desktop/i });
+    expect(downloadLinks.length).toBeGreaterThan(0);
+    expect(downloadLinks[0].getAttribute("href")).toBe(
       "https://github.com/LukasLiss/totem-tool/releases/latest"
     );
 
