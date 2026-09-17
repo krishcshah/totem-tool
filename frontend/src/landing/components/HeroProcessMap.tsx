@@ -21,7 +21,6 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
   const [activeType, setActiveType] = useState<string | null>(null);
   const [pinnedType, setPinnedType] = useState<string | null>(null);
   const [motionReduced, setMotionReduced] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const { isAutoPlaying, pauseAutoPlay } = useInactivityResume(true, 30000);
 
   // Micro-detail wordmark animation phase
@@ -227,8 +226,6 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
       {/* The Bespoke SVG Process Map */}
       <div
         className="w-full relative bg-white rounded-xl border border-[#E4E4E7] shadow-xs overflow-hidden p-2 sm:p-4"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
       >
         <svg
           viewBox="0 0 920 365"
@@ -277,7 +274,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
             strokeWidth={getThreadStrokeWidth("order")}
             strokeOpacity={getThreadOpacity("order")}
             strokeLinecap="round"
-            className={!motionReduced && !isHovered ? "animate-thread-pulse" : ""}
+            className={!motionReduced ? "animate-thread-pulse" : ""}
             style={{ transition: "stroke-opacity 0.3s, stroke-width 0.3s" }}
           />
 
@@ -290,7 +287,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
             strokeWidth={getThreadStrokeWidth("item")}
             strokeOpacity={getThreadOpacity("item")}
             strokeLinecap="round"
-            className={!motionReduced && !isHovered ? "animate-thread-pulse" : ""}
+            className={!motionReduced ? "animate-thread-pulse" : ""}
             style={{ transition: "stroke-opacity 0.3s, stroke-width 0.3s" }}
           />
 
@@ -303,7 +300,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
             strokeWidth={getThreadStrokeWidth("package")}
             strokeOpacity={getThreadOpacity("package")}
             strokeLinecap="round"
-            className={!motionReduced && !isHovered ? "animate-thread-pulse" : ""}
+            className={!motionReduced ? "animate-thread-pulse" : ""}
             style={{ transition: "stroke-opacity 0.3s, stroke-width 0.3s" }}
           />
 
@@ -317,7 +314,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
             strokeOpacity={getThreadOpacity("resource")}
             strokeLinecap="round"
             strokeDasharray={effectiveType === "resource" ? undefined : "5 5"}
-            className={!motionReduced && !isHovered ? "animate-thread-pulse" : ""}
+            className={!motionReduced ? "animate-thread-pulse" : ""}
             style={{ transition: "stroke-opacity 0.3s, stroke-width 0.3s" }}
           />
 
