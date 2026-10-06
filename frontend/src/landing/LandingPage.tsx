@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { ArrowRight, Github } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { ArrowRight, Github, ChevronUp, Copy, Check } from "lucide-react";
 import { LandingNav } from "./components/LandingNav";
 import { HeroProcessMap } from "./components/HeroProcessMap";
 import { ObjectCentricComparison } from "./components/ObjectCentricComparison";
@@ -16,6 +16,9 @@ import { TRUST_STRIP, GITHUB_REPO_URL } from "./content";
 import "./landing.css";
 
 export const LandingPage: React.FC = () => {
+  const [copiedPip, setCopiedPip] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
   useEffect(() => {
     // Dynamic SEO title
     const originalTitle = document.title;
@@ -25,6 +28,21 @@ export const LandingPage: React.FC = () => {
       document.title = originalTitle;
     };
   }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 500);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleCopyPip = () => {
+    navigator.clipboard.writeText("pip install totem-tool");
+    setCopiedPip(true);
+    setTimeout(() => setCopiedPip(false), 2000);
+  };
 
   const handleScrollToWorkflow = () => {
     const el = document.getElementById("workflow");
@@ -108,6 +126,35 @@ export const LandingPage: React.FC = () => {
                 </a>
               </div>
 
+              {/* Quick Pip Install Badge */}
+              <div className="flex items-center justify-center pt-1">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-black/5 hover:bg-black/10 border border-black/10 shadow-2xs font-mono text-xs text-neutral-800 transition">
+                  <span className="text-neutral-400 select-none">$</span>
+                  <a
+                    href="https://pypi.org/project/totem-tool/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-medium hover:text-blue-600 transition"
+                    title="View totem-tool on PyPI"
+                  >
+                    pip install totem-tool
+                  </a>
+                  <button
+                    type="button"
+                    onClick={handleCopyPip}
+                    className="ml-1 p-0.5 text-neutral-500 hover:text-black transition cursor-pointer"
+                    aria-label="Copy pip install command"
+                    title="Copy pip install command"
+                  >
+                    {copiedPip ? (
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    ) : (
+                      <Copy className="w-3.5 h-3.5" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
               {/* Restrained Trust Strip */}
               <div className="pt-8 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto">
                 {TRUST_STRIP.map((item) => (
@@ -162,6 +209,18 @@ export const LandingPage: React.FC = () => {
         {/* SECTION 12 & 13 — FINAL CTA & FOOTER */}
         <LandingFooter />
       </main>
+
+      {/* Floating Back to Top Button */}
+      {showBackToTop && (
+        <button
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-6 right-6 z-40 p-2.5 rounded-full bg-[#0B0D0F] text-white shadow-lg hover:bg-neutral-800 transition-all duration-200 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-600 animate-in fade-in slide-in-from-bottom-4"
+          aria-label="Scroll back to top"
+        >
+          <ChevronUp className="w-5 h-5" />
+        </button>
+      )}
     </div>
   );
 };

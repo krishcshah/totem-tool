@@ -107,6 +107,15 @@ export const LandingFooter: React.FC = () => {
               </a>
             ))}
             <a
+              href="https://pypi.org/project/totem-tool/"
+              target="_blank"
+              rel="noreferrer"
+              className="hover:text-black transition inline-flex items-center gap-1"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>PyPI Package</span>
+            </a>
+            <a
               href={`${GITHUB_REPO_URL}/blob/main/README.md`}
               target="_blank"
               rel="noreferrer"

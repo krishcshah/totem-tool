@@ -210,6 +210,94 @@ describe("LandingPage Component Tests", () => {
       screen.getByText("Reveal executions, variants, and models.")
     ).toBeTruthy();
   });
+
+  it("copies pip install command when copy button is clicked", async () => {
+    const writeTextMock = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, "clipboard", {
+      value: { writeText: writeTextMock },
+      writable: true,
+      configurable: true,
+    });
+
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <LandingPage />
+      </MemoryRouter>
+    );
+
+    const copyBtns = screen.getAllByRole("button", { name: /copy pip install command/i });
+    expect(copyBtns.length).toBeGreaterThan(0);
+    fireEvent.click(copyBtns[0]);
+
+    expect(writeTextMock).toHaveBeenCalledWith("pip install totem-tool");
+  });
+
+  it("allows clicking events in HeroProcessMap to display inspection details", () => {
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <LandingPage />
+      </MemoryRouter>
+    );
+
+    const pickItemsEvent = screen.getByRole("button", {
+      name: /Event: Pick Items at 10:22:15/i,
+    });
+    expect(pickItemsEvent).toBeTruthy();
+
+    fireEvent.click(pickItemsEvent);
+
+    expect(
+      screen.getByText(/Operator W-14 claims picking wave for items i-01, i-02/i)
+    ).toBeTruthy();
+
+    const clearPinBtn = screen.getByRole("button", { name: /clear event pin/i });
+    expect(clearPinBtn).toBeTruthy();
+    fireEvent.click(clearPinBtn);
+
+    expect(
+      screen.getByText(/Interactive map: hover or click events or object chips/i)
+    ).toBeTruthy();
+  });
+
+  it("toggles between SQL code and results in the DuckDB Workbench widget", () => {
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <LandingPage />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/activity, count\(\*\) AS event_count/i)).toBeTruthy();
+
+    const resultsBtn = screen.getByRole("button", { name: /Results \(5 rows\)/i });
+    fireEvent.click(resultsBtn);
+
+    expect(screen.getByText(/⚡ Executed in 4.2ms · 5 rows returned/i)).toBeTruthy();
+    expect(screen.getByText("12,840")).toBeTruthy();
+
+    const sqlBtn = screen.getByRole("button", { name: /SQL Query/i });
+    fireEvent.click(sqlBtn);
+
+    expect(screen.getByText(/activity, count\(\*\) AS event_count/i)).toBeTruthy();
+  });
+
+  it("renders OC-DFG diagram with SVG arrow markers when selected", () => {
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <LandingPage />
+      </MemoryRouter>
+    );
+
+    const ocdfgTab = screen.getByRole("tab", { name: /oc-dfg/i });
+    fireEvent.click(ocdfgTab);
+
+    const svg = screen.getByRole("img", {
+      name: /Object-Centric Directly Follows Graph with multi-type edge routing/i,
+    });
+    expect(svg).toBeTruthy();
+    expect(svg.querySelector("#arrow-blue")).toBeTruthy();
+    expect(svg.querySelector("#arrow-purple")).toBeTruthy();
+    expect(svg.querySelector("#arrow-teal")).toBeTruthy();
+  });
 });
 
 describe("Routing Integration in App", () => {

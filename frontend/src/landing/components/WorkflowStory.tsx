@@ -199,8 +199,8 @@ export const WorkflowStory: React.FC = () => {
 
         {/* Dynamic Stage Visual & Detail Row — Fixed height container to prevent layout jumping */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
-          {/* Left Column: Fixed height layout */}
-          <div className="lg:col-span-5 h-[420px] sm:h-[460px] flex flex-col justify-between bg-white/60 p-6 rounded-xl border border-neutral-200/80">
+          {/* Left Column: Fixed height on desktop, flexible on mobile */}
+          <div className="lg:col-span-5 min-h-[400px] lg:h-[460px] flex flex-col justify-between bg-white/60 p-6 rounded-xl border border-neutral-200/80">
             <div key={activeStage.number} className="tab-content-enter flex-1 flex flex-col justify-start space-y-4">
               <div className="flex items-center gap-3">
                 <span className="font-mono text-xs font-semibold px-2.5 py-1 bg-black text-white rounded">
@@ -265,8 +265,8 @@ export const WorkflowStory: React.FC = () => {
             </div>
           </div>
 
-          {/* Right Column: Fixed height ProductWindow */}
-          <div className="lg:col-span-7 h-[420px] sm:h-[460px] flex flex-col">
+          {/* Right Column: Fixed height on desktop, flexible on mobile */}
+          <div className="lg:col-span-7 min-h-[400px] lg:h-[460px] flex flex-col">
             <div key={activeStageIndex} className="tab-content-enter h-full">
               {activeStageIndex === 0 && (
                 /* 01 Import: Authentic Ingestion & Schema Inspector */
@@ -289,9 +289,9 @@ export const WorkflowStory: React.FC = () => {
                       </span>
                     </div>
 
-                    {/* Columnar preview table */}
-                    <div className="my-2 flex-1 overflow-hidden border border-neutral-200 rounded text-[11px]">
-                      <table className="w-full text-left border-collapse">
+                    {/* Columnar preview table with horizontal scrolling on mobile */}
+                    <div className="my-2 flex-1 overflow-x-auto no-scrollbar border border-neutral-200 rounded text-[11px]">
+                      <table className="w-full min-w-[480px] text-left border-collapse">
                         <thead>
                           <tr className="bg-neutral-50 text-neutral-600 border-b border-neutral-200">
                             <th className="py-1.5 px-2.5 font-semibold">event_id</th>
@@ -444,7 +444,9 @@ export const WorkflowStory: React.FC = () => {
                         <div className="text-[10px] text-red-700 mt-1">Deviations proven</div>
                       </div>
                       <div className="p-3 rounded bg-amber-50 border border-amber-300 text-amber-900">
-                        <div className="text-lg font-bold">0</div>
+                        <div className="text-lg font-bold">
+                          <AnimatedNumber value={0} />
+                        </div>
                         <div className="text-xs font-semibold">Inconclusive</div>
                         <div className="text-[10px] text-amber-700 mt-1">Search bounded</div>
                       </div>

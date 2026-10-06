@@ -1,5 +1,5 @@
-import React from "react";
-import { Database, FileCode, CheckCircle2 } from "lucide-react";
+import React, { useState } from "react";
+import { Database, FileCode, CheckCircle2, Play, Copy, Check } from "lucide-react";
 import { ProductWindow } from "./ProductWindow";
 import { AnimatedNumber, AnimatedProgressBar } from "./AnimatedMetrics";
 
@@ -7,6 +7,28 @@ import { AnimatedNumber, AnimatedProgressBar } from "./AnimatedMetrics";
 import variantsImg from "@/images/variants-preview.png";
 
 export const WorkbenchMosaic: React.FC = () => {
+  const [sqlView, setSqlView] = useState<"sql" | "results">("sql");
+  const [copiedSql, setCopiedSql] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
+
+  const sampleSql = `SELECT activity, count(*) AS event_count, count(DISTINCT object_id) AS objects
+FROM events JOIN event_object USING (event_id)
+GROUP BY activity ORDER BY event_count DESC LIMIT 5;`;
+
+  const handleCopySql = () => {
+    navigator.clipboard.writeText(sampleSql);
+    setCopiedSql(true);
+    setTimeout(() => setCopiedSql(false), 2000);
+  };
+
+  const handleRunQuery = () => {
+    setIsRunning(true);
+    setTimeout(() => {
+      setIsRunning(false);
+      setSqlView("results");
+    }, 280);
+  };
+
   return (
     <section className="py-20 sm:py-32 border-b border-[#E4E4E7] bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -113,16 +135,42 @@ export const WorkbenchMosaic: React.FC = () => {
           {/* Card 3: DuckDB Sandboxed SQL Editor (Span 8) */}
           <div className="md:col-span-8 rounded-xl border border-[#E4E4E7] bg-[#F7F7F2] p-6 shadow-xs flex flex-col justify-between">
             <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-[#E4E4E7]">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-[#E4E4E7]">
                 <div className="flex items-center gap-2">
                   <Database className="w-4 h-4 text-purple-600" />
                   <span className="font-mono text-xs font-bold text-black">
                     DuckDB SQL Editor Widget
                   </span>
                 </div>
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-purple-100 text-purple-800">
-                  SELECT-only · sandboxed
-                </span>
+                <div className="flex items-center gap-2">
+                  <div className="inline-flex rounded-md border border-neutral-300 bg-white p-0.5 text-[11px] font-mono">
+                    <button
+                      type="button"
+                      onClick={() => setSqlView("sql")}
+                      className={`px-2.5 py-0.5 rounded transition ${
+                        sqlView === "sql"
+                          ? "bg-purple-600 text-white font-semibold shadow-2xs"
+                          : "text-neutral-600 hover:text-black"
+                      }`}
+                    >
+                      SQL Query
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSqlView("results")}
+                      className={`px-2.5 py-0.5 rounded transition ${
+                        sqlView === "results"
+                          ? "bg-purple-600 text-white font-semibold shadow-2xs"
+                          : "text-neutral-600 hover:text-black"
+                      }`}
+                    >
+                      Results (5 rows)
+                    </button>
+                  </div>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-100 text-purple-800">
+                    SELECT-only · sandboxed
+                  </span>
+                </div>
               </div>
 
               <div>
@@ -135,17 +183,96 @@ export const WorkbenchMosaic: React.FC = () => {
                 </p>
               </div>
 
-              {/* Sample SQL Code Box */}
-              <div className="rounded-lg bg-[#0D1014] text-slate-200 p-3.5 font-mono text-xs overflow-x-auto">
-                <div className="text-purple-400">SELECT</div>
-                <div className="pl-4">
-                  activity, count(*) AS event_count, count(DISTINCT object_id) AS objects
+              {/* Sample SQL Code Box vs Results Table */}
+              {sqlView === "sql" ? (
+                <div className="relative rounded-lg bg-[#0D1014] text-slate-200 p-3.5 font-mono text-xs overflow-x-auto shadow-inner">
+                  <div className="flex items-center justify-between pb-2 mb-2 border-b border-neutral-800 text-[11px]">
+                    <span className="text-slate-400">query.sql</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleCopySql}
+                        className="text-[10px] text-slate-400 hover:text-white flex items-center gap-1 transition cursor-pointer"
+                        title="Copy SQL"
+                      >
+                        {copiedSql ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                        <span>{copiedSql ? "Copied" : "Copy"}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleRunQuery}
+                        disabled={isRunning}
+                        className="px-2 py-0.5 rounded bg-purple-600 hover:bg-purple-500 text-white font-semibold flex items-center gap-1 text-[10px] transition cursor-pointer"
+                      >
+                        <Play className="w-2.5 h-2.5 fill-current" />
+                        <span>{isRunning ? "Running..." : "Run"}</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div className="text-purple-400">SELECT</div>
+                  <div className="pl-4">
+                    activity, count(*) AS event_count, count(DISTINCT object_id) AS objects
+                  </div>
+                  <div className="text-purple-400">FROM</div>
+                  <div className="pl-4">events JOIN event_object USING (event_id)</div>
+                  <div className="text-purple-400">GROUP BY</div>
+                  <div className="pl-4">activity ORDER BY event_count DESC LIMIT 5;</div>
                 </div>
-                <div className="text-purple-400">FROM</div>
-                <div className="pl-4">events JOIN event_object USING (event_id)</div>
-                <div className="text-purple-400">GROUP BY</div>
-                <div className="pl-4">activity ORDER BY event_count DESC LIMIT 5;</div>
-              </div>
+              ) : (
+                <div className="rounded-lg bg-white border border-neutral-200 overflow-hidden shadow-2xs font-mono text-[11px]">
+                  <div className="px-3 py-1.5 bg-neutral-50 border-b border-neutral-200 flex items-center justify-between text-neutral-600">
+                    <span className="flex items-center gap-1.5 text-emerald-700 font-semibold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      ⚡ Executed in 4.2ms · 5 rows returned
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setSqlView("sql")}
+                      className="text-[10px] text-neutral-500 hover:text-black underline cursor-pointer"
+                    >
+                      View SQL
+                    </button>
+                  </div>
+                  <div className="overflow-x-auto no-scrollbar">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="bg-neutral-100/70 text-neutral-700 border-b border-neutral-200">
+                          <th className="py-1 px-3 font-semibold">activity</th>
+                          <th className="py-1 px-3 font-semibold">event_count</th>
+                          <th className="py-1 px-3 font-semibold">objects</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-neutral-100 text-neutral-800">
+                        <tr className="hover:bg-neutral-50">
+                          <td className="py-1 px-3 font-semibold text-purple-700">Pick Items</td>
+                          <td className="py-1 px-3">12,840</td>
+                          <td className="py-1 px-3 text-neutral-500">6,420</td>
+                        </tr>
+                        <tr className="hover:bg-neutral-50">
+                          <td className="py-1 px-3 font-semibold text-purple-700">Create Order</td>
+                          <td className="py-1 px-3">4,219</td>
+                          <td className="py-1 px-3 text-neutral-500">4,219</td>
+                        </tr>
+                        <tr className="hover:bg-neutral-50">
+                          <td className="py-1 px-3 font-semibold text-purple-700">Pack &amp; Label</td>
+                          <td className="py-1 px-3">3,912</td>
+                          <td className="py-1 px-3 text-neutral-500">3,912</td>
+                        </tr>
+                        <tr className="hover:bg-neutral-50">
+                          <td className="py-1 px-3 font-semibold text-purple-700">Quality Check</td>
+                          <td className="py-1 px-3">3,892</td>
+                          <td className="py-1 px-3 text-neutral-500">3,892</td>
+                        </tr>
+                        <tr className="hover:bg-neutral-50">
+                          <td className="py-1 px-3 font-semibold text-purple-700">Dispatch Shipment</td>
+                          <td className="py-1 px-3">3,880</td>
+                          <td className="py-1 px-3 text-neutral-500">3,880</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="mt-4 pt-3 border-t border-neutral-200 flex items-center justify-between text-[11px] font-mono text-neutral-500">

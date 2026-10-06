@@ -20,6 +20,8 @@ interface ProcessEvent {
 export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }) => {
   const [activeType, setActiveType] = useState<string | null>(null);
   const [pinnedType, setPinnedType] = useState<string | null>(null);
+  const [hoveredEventId, setHoveredEventId] = useState<string | null>(null);
+  const [pinnedEventId, setPinnedEventId] = useState<string | null>(null);
   const [motionReduced, setMotionReduced] = useState(false);
   const { isAutoPlaying, pauseAutoPlay } = useInactivityResume(true, 30000);
 
@@ -45,7 +47,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
 
   // Auto-cycle through the 4 threads every 2.5s until user hovers or clicks
   useEffect(() => {
-    if (!isAutoPlaying || motionReduced) return;
+    if (!isAutoPlaying || motionReduced || pinnedType || pinnedEventId) return;
 
     const threadIds = ["order", "item", "package", "resource"];
     const timer = setInterval(() => {
@@ -58,9 +60,10 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
     }, 2500);
 
     return () => clearInterval(timer);
-  }, [isAutoPlaying, motionReduced, onSelectThread]);
+  }, [isAutoPlaying, motionReduced, pinnedType, pinnedEventId, onSelectThread]);
 
   const effectiveType = pinnedType || activeType;
+  const effectiveEventId = pinnedEventId || hoveredEventId;
 
   const handleTypeHover = (typeId: string | null) => {
     if (typeId) {
@@ -78,6 +81,20 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
     setPinnedType(next);
     setActiveType(next);
     onSelectThread?.(next);
+  };
+
+  const handleEventHover = (eventId: string | null) => {
+    if (eventId) {
+      pauseAutoPlay();
+    }
+    if (!pinnedEventId) {
+      setHoveredEventId(eventId);
+    }
+  };
+
+  const handleEventClick = (eventId: string) => {
+    pauseAutoPlay();
+    setPinnedEventId((prev) => (prev === eventId ? null : eventId));
   };
 
   // Process events along chronological X coordinates
@@ -129,13 +146,21 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
     },
   ];
 
+  const activeEvent = events.find((e) => e.id === effectiveEventId);
+
   // Helper to determine opacity
   const getThreadOpacity = (typeId: string) => {
+    if (activeEvent) {
+      return (activeEvent.involvedTypes as string[]).includes(typeId) ? 1 : 0.15;
+    }
     if (!effectiveType) return 0.85;
     return effectiveType === typeId ? 1 : 0.15;
   };
 
   const getThreadStrokeWidth = (typeId: string) => {
+    if (activeEvent) {
+      return (activeEvent.involvedTypes as string[]).includes(typeId) ? 3.5 : 1.5;
+    }
     if (!effectiveType) return 2.5;
     return effectiveType === typeId ? 4 : 1.5;
   };
@@ -313,18 +338,36 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
             strokeWidth={getThreadStrokeWidth("resource")}
             strokeOpacity={getThreadOpacity("resource")}
             strokeLinecap="round"
-            strokeDasharray={effectiveType === "resource" ? undefined : "5 5"}
             className={!motionReduced ? "animate-thread-pulse" : ""}
             style={{ transition: "stroke-opacity 0.3s, stroke-width 0.3s" }}
           />
 
           {/* Events (Vertical connectors, pill nodes, labels) */}
           {events.map((evt) => {
-            const isRelevant = !effectiveType || (evt.involvedTypes as string[]).includes(effectiveType);
+            const isEventSelected = effectiveEventId === evt.id;
+            const isRelevant = activeEvent
+              ? isEventSelected
+              : !effectiveType || (evt.involvedTypes as string[]).includes(effectiveType);
+
             return (
               <g
                 key={evt.id}
-                className="cursor-pointer transition-opacity duration-300"
+                role="button"
+                tabIndex={0}
+                aria-pressed={isEventSelected}
+                aria-label={`Event: ${evt.name} at ${evt.timeLabel}. Involves ${evt.involvedTypes.join(", ")}`}
+                onClick={() => handleEventClick(evt.id)}
+                onMouseEnter={() => handleEventHover(evt.id)}
+                onMouseLeave={() => handleEventHover(null)}
+                onFocus={() => handleEventHover(evt.id)}
+                onBlur={() => handleEventHover(null)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    handleEventClick(evt.id);
+                  }
+                }}
+                className="cursor-pointer transition-opacity duration-300 focus:outline-none"
                 opacity={isRelevant ? 1 : 0.25}
               >
                 {/* Time drop line */}
@@ -333,20 +376,21 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
                   y1={45}
                   x2={evt.x}
                   y2={evt.y - 20}
-                  stroke="#CBD5E1"
-                  strokeWidth="1"
-                  strokeDasharray="2 2"
+                  stroke={isEventSelected ? "#2563EB" : "#CBD5E1"}
+                  strokeWidth={isEventSelected ? "1.5" : "1"}
+                  strokeDasharray={isEventSelected ? undefined : "2 2"}
                 />
-                <circle cx={evt.x} cy={45} r="2.5" fill="#94A3B8" />
+                <circle cx={evt.x} cy={45} r={isEventSelected ? 3.5 : 2.5} fill={isEventSelected ? "#2563EB" : "#94A3B8"} />
 
                 {/* Time stamp label */}
                 <text
                   x={evt.x}
                   y={60}
                   textAnchor="middle"
-                  fill="#64748B"
+                  fill={isEventSelected ? "#2563EB" : "#64748B"}
                   fontSize="9"
                   fontFamily="JetBrains Mono"
+                  fontWeight={isEventSelected ? "bold" : "normal"}
                 >
                   {evt.timeLabel}
                 </text>
@@ -359,9 +403,9 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
                   height="36"
                   rx="6"
                   fill="#FFFFFF"
-                  stroke={isRelevant ? "#0B0D0F" : "#CBD5E1"}
-                  strokeWidth={isRelevant ? "1.5" : "1"}
-                  filter="drop-shadow(0 2px 4px rgba(0,0,0,0.04))"
+                  stroke={isEventSelected ? "#2563EB" : isRelevant ? "#0B0D0F" : "#CBD5E1"}
+                  strokeWidth={isEventSelected ? "2.5" : isRelevant ? "1.5" : "1"}
+                  filter={isEventSelected ? "drop-shadow(0 4px 8px rgba(37,99,235,0.2))" : "drop-shadow(0 2px 4px rgba(0,0,0,0.04))"}
                 />
 
                 {/* Event title */}
@@ -369,9 +413,9 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
                   x={evt.x}
                   y={evt.y + 4}
                   textAnchor="middle"
-                  fill="#0B0D0F"
+                  fill={isEventSelected ? "#1E40AF" : "#0B0D0F"}
                   fontSize="11"
-                  fontWeight="600"
+                  fontWeight={isEventSelected ? "700" : "600"}
                   fontFamily="Inter, sans-serif"
                 >
                   {evt.name}
@@ -386,7 +430,7 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
                         key={typeId}
                         cx={idx * 12 + 4}
                         cy="0"
-                        r="3.5"
+                        r={isEventSelected ? 4 : 3.5}
                         fill={thread?.color || "#64748B"}
                       />
                     );
@@ -428,13 +472,52 @@ export const HeroProcessMap: React.FC<HeroProcessMapProps> = ({ onSelectThread }
           </g>
         </svg>
 
-        {/* Explanatory footer strip */}
-        <div className="mt-2 pt-2 border-t border-neutral-100 flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] text-neutral-500 font-mono">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Interactive event-object map: click any chip above to isolate lifecycle</span>
-          </div>
-          <span className="text-neutral-400">Illustrative OCEL 2.0 graph</span>
+        {/* Explanatory footer strip / Interactive Event Inspector */}
+        <div className="mt-2 pt-2 border-t border-neutral-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-mono min-h-[32px]">
+          {activeEvent ? (
+            <div className="flex items-center gap-2 flex-wrap text-black w-full">
+              <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse shrink-0" />
+              <span className="font-bold text-neutral-900 font-sans">{activeEvent.name}</span>
+              <span className="text-neutral-400">({activeEvent.timeLabel})</span>
+              <span className="text-neutral-300">·</span>
+              <span className="text-neutral-600 font-sans">{activeEvent.description}</span>
+              <div className="flex items-center gap-1 ml-1">
+                {activeEvent.involvedTypes.map((tId) => {
+                  const thread = OBJECT_THREADS.find((t) => t.id === tId);
+                  return (
+                    <span
+                      key={tId}
+                      className="px-1.5 py-0.5 rounded text-[10px] font-medium"
+                      style={{
+                        backgroundColor: `${thread?.color}18`,
+                        color: thread?.color,
+                        border: `1px solid ${thread?.color}40`,
+                      }}
+                    >
+                      {thread?.name}
+                    </span>
+                  );
+                })}
+              </div>
+              {pinnedEventId && (
+                <button
+                  type="button"
+                  onClick={() => setPinnedEventId(null)}
+                  className="ml-auto text-[10px] text-neutral-500 hover:text-black underline cursor-pointer"
+                >
+                  Clear event pin ✕
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-2 text-neutral-500">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                <span>Interactive map: hover or click events or object chips to inspect relationships</span>
+              </div>
+              <span className="text-neutral-400">Illustrative OCEL 2.0 graph</span>
+            </>
+          )}
         </div>
       </div>
     </div>

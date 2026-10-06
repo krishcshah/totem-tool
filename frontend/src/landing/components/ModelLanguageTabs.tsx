@@ -140,8 +140,8 @@ export const ModelLanguageTabs: React.FC = () => {
           className="rounded-2xl border border-[#E4E4E7] bg-[#F7F7F2] p-6 sm:p-10 shadow-xs"
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Left: Accurate Model Vector Diagram: Fixed 340px height */}
-            <div className="lg:col-span-7 bg-white rounded-xl border border-[#E4E4E7] p-6 shadow-2xs overflow-hidden flex items-center justify-center h-[340px]">
+            {/* Left: Accurate Model Vector Diagram: Fixed 340px height on desktop, flexible on mobile */}
+            <div className="lg:col-span-7 bg-white rounded-xl border border-[#E4E4E7] p-6 shadow-2xs overflow-hidden flex items-center justify-center min-h-[300px] lg:h-[340px]">
               <div key={activeFormalism.id} className="w-full h-full flex items-center justify-center tab-content-enter">
                 {activeFormalism.id === "totem" && (
                   /* TOTeM: Object types, temporal relations (D, P, I), cardinalities */
@@ -202,13 +202,46 @@ export const ModelLanguageTabs: React.FC = () => {
                 )}
 
                 {activeFormalism.id === "ocdfg" && (
-                  /* OC-DFG: Multi-type edge routing */
+                  /* OC-DFG: Multi-type edge routing with defined arrow markers */
                   <svg
                     viewBox="0 0 540 260"
                     className="w-full h-auto select-none max-h-[280px]"
                     role="img"
                     aria-label="Object-Centric Directly Follows Graph with multi-type edge routing"
                   >
+                    <defs>
+                      <marker
+                        id="arrow-blue"
+                        markerWidth="6"
+                        markerHeight="6"
+                        refX="5"
+                        refY="3"
+                        orient="auto"
+                      >
+                        <path d="M 0 0 L 6 3 L 0 6 Z" fill="#2563EB" />
+                      </marker>
+                      <marker
+                        id="arrow-purple"
+                        markerWidth="6"
+                        markerHeight="6"
+                        refX="5"
+                        refY="3"
+                        orient="auto"
+                      >
+                        <path d="M 0 0 L 6 3 L 0 6 Z" fill="#8B5CF6" />
+                      </marker>
+                      <marker
+                        id="arrow-teal"
+                        markerWidth="6"
+                        markerHeight="6"
+                        refX="5"
+                        refY="3"
+                        orient="auto"
+                      >
+                        <path d="M 0 0 L 6 3 L 0 6 Z" fill="#0D9488" />
+                      </marker>
+                    </defs>
+
                     <g transform="translate(40, 105)">
                       <rect x="0" y="0" width="110" height="45" rx="6" fill="#F8FAFC" stroke="#0B0D0F" strokeWidth="1.5" />
                       <text x="55" y="27" textAnchor="middle" fill="#0B0D0F" fontSize="11" fontWeight="600" fontFamily="Inter">
@@ -231,19 +264,19 @@ export const ModelLanguageTabs: React.FC = () => {
                     </g>
 
                     {/* Edge 1: Order thread */}
-                    <path d="M 150 120 L 210 120" stroke="#2563EB" strokeWidth="2.5" markerEnd="url(#arrow-blue)" />
+                    <path d="M 150 120 L 204 120" stroke="#2563EB" strokeWidth="2.5" markerEnd="url(#arrow-blue)" />
                     <text x="180" y="112" textAnchor="middle" fill="#2563EB" fontSize="10" fontFamily="JetBrains Mono" fontWeight="bold">
                       order (4.2k)
                     </text>
 
                     {/* Edge 2: Item thread */}
-                    <path d="M 150 135 L 210 135" stroke="#8B5CF6" strokeWidth="2.5" markerEnd="url(#arrow-purple)" />
+                    <path d="M 150 135 L 204 135" stroke="#8B5CF6" strokeWidth="2.5" markerEnd="url(#arrow-purple)" />
                     <text x="180" y="152" textAnchor="middle" fill="#8B5CF6" fontSize="10" fontFamily="JetBrains Mono" fontWeight="bold">
                       item (12.8k)
                     </text>
 
                     {/* Edge 3 to deliver */}
-                    <path d="M 320 127 L 380 127" stroke="#0D9488" strokeWidth="2.5" />
+                    <path d="M 320 127 L 374 127" stroke="#0D9488" strokeWidth="2.5" markerEnd="url(#arrow-teal)" />
                     <text x="350" y="120" textAnchor="middle" fill="#0D9488" fontSize="10" fontFamily="JetBrains Mono" fontWeight="bold">
                       pkg (3.9k)
                     </text>
@@ -251,13 +284,46 @@ export const ModelLanguageTabs: React.FC = () => {
                 )}
 
                 {activeFormalism.id === "ocpn" && (
-                  /* OCPN: Colored Petri Net with typed places */
+                  /* OCPN: Colored Petri Net with typed places and directed arcs */
                   <svg
                     viewBox="0 0 540 260"
                     className="w-full h-auto select-none max-h-[280px]"
                     role="img"
                     aria-label="Object-Centric Petri Net diagram with typed places and transitions"
                   >
+                    <defs>
+                      <marker
+                        id="pn-arrow-blue"
+                        markerWidth="6"
+                        markerHeight="6"
+                        refX="5"
+                        refY="3"
+                        orient="auto"
+                      >
+                        <path d="M 0 0 L 6 3 L 0 6 Z" fill="#2563EB" />
+                      </marker>
+                      <marker
+                        id="pn-arrow-purple"
+                        markerWidth="6"
+                        markerHeight="6"
+                        refX="5"
+                        refY="3"
+                        orient="auto"
+                      >
+                        <path d="M 0 0 L 6 3 L 0 6 Z" fill="#8B5CF6" />
+                      </marker>
+                      <marker
+                        id="pn-arrow-teal"
+                        markerWidth="6"
+                        markerHeight="6"
+                        refX="5"
+                        refY="3"
+                        orient="auto"
+                      >
+                        <path d="M 0 0 L 6 3 L 0 6 Z" fill="#0D9488" />
+                      </marker>
+                    </defs>
+
                     {/* Places: Circles with type color */}
                     <circle cx="90" cy="90" r="22" fill="#EFF6FF" stroke="#2563EB" strokeWidth="2" />
                     <circle cx="90" cy="90" r="4" fill="#2563EB" />
@@ -283,10 +349,10 @@ export const ModelLanguageTabs: React.FC = () => {
                       p_package
                     </text>
 
-                    {/* Arcs */}
-                    <line x1="112" y1="95" x2="230" y2="125" stroke="#2563EB" strokeWidth="1.5" />
-                    <line x1="112" y1="175" x2="230" y2="155" stroke="#8B5CF6" strokeWidth="1.5" />
-                    <line x1="270" y1="142" x2="388" y2="142" stroke="#0D9488" strokeWidth="1.5" />
+                    {/* Arcs with arrowheads */}
+                    <line x1="112" y1="95" x2="224" y2="124" stroke="#2563EB" strokeWidth="1.5" markerEnd="url(#pn-arrow-blue)" />
+                    <line x1="112" y1="175" x2="224" y2="156" stroke="#8B5CF6" strokeWidth="1.5" markerEnd="url(#pn-arrow-purple)" />
+                    <line x1="270" y1="142" x2="382" y2="142" stroke="#0D9488" strokeWidth="1.5" markerEnd="url(#pn-arrow-teal)" />
                   </svg>
                 )}
 
@@ -298,6 +364,29 @@ export const ModelLanguageTabs: React.FC = () => {
                     role="img"
                     aria-label="Object-Centric C-Net diagram showing input and output binding sets"
                   >
+                    <defs>
+                      <marker
+                        id="cnet-arrow-blue"
+                        markerWidth="6"
+                        markerHeight="6"
+                        refX="5"
+                        refY="3"
+                        orient="auto"
+                      >
+                        <path d="M 0 0 L 6 3 L 0 6 Z" fill="#2563EB" />
+                      </marker>
+                      <marker
+                        id="cnet-arrow-purple"
+                        markerWidth="6"
+                        markerHeight="6"
+                        refX="5"
+                        refY="3"
+                        orient="auto"
+                      >
+                        <path d="M 0 0 L 6 3 L 0 6 Z" fill="#8B5CF6" />
+                      </marker>
+                    </defs>
+
                     {/* Activity A */}
                     <g transform="translate(60, 100)">
                       <rect x="0" y="0" width="100" height="50" rx="6" fill="#F8FAFC" stroke="#0B0D0F" strokeWidth="1.5" />
@@ -315,8 +404,8 @@ export const ModelLanguageTabs: React.FC = () => {
                     </g>
 
                     {/* Causal dependency arcs */}
-                    <line x1="160" y1="115" x2="360" y2="115" stroke="#2563EB" strokeWidth="2" />
-                    <line x1="160" y1="135" x2="360" y2="135" stroke="#8B5CF6" strokeWidth="2" />
+                    <line x1="160" y1="115" x2="354" y2="115" stroke="#2563EB" strokeWidth="2" markerEnd="url(#cnet-arrow-blue)" />
+                    <line x1="160" y1="135" x2="354" y2="135" stroke="#8B5CF6" strokeWidth="2" markerEnd="url(#cnet-arrow-purple)" />
 
                     {/* Output marker groups at A */}
                     <circle cx="210" cy="115" r="5" fill="#2563EB" stroke="#FFFFFF" strokeWidth="1.5" />
@@ -336,8 +425,8 @@ export const ModelLanguageTabs: React.FC = () => {
               </div>
             </div>
 
-            {/* Right: Copy & Capabilities: Fixed 340px height */}
-            <div className="lg:col-span-5 h-[340px] flex flex-col justify-between">
+            {/* Right: Copy & Capabilities: Fixed 340px height on desktop, flexible on mobile */}
+            <div className="lg:col-span-5 min-h-[280px] lg:h-[340px] flex flex-col justify-between">
               <div key={activeFormalism.id} className="tab-content-enter space-y-4">
                 <div>
                   <span className="font-mono text-xs text-neutral-500 uppercase tracking-widest block mb-1">

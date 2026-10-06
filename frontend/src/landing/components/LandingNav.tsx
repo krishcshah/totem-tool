@@ -8,8 +8,33 @@ export const LandingNav: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState<string>("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   const desktopDownloadUrl = import.meta.env.VITE_DESKTOP_DOWNLOAD_URL;
+
+  // Track page scroll progress for top progress bar
+  useEffect(() => {
+    const handleScrollProgress = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalScroll > 0) {
+        setScrollProgress(Math.min(100, Math.max(0, (window.scrollY / totalScroll) * 100)));
+      }
+    };
+    window.addEventListener("scroll", handleScrollProgress, { passive: true });
+    handleScrollProgress();
+    return () => window.removeEventListener("scroll", handleScrollProgress);
+  }, []);
+
+  // Close mobile menu on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape" && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [mobileMenuOpen]);
 
   // Scroll listener for sticky elevation and active section spy
   useEffect(() => {
@@ -66,6 +91,13 @@ export const LandingNav: React.FC = () => {
           : "bg-transparent border-b border-transparent shadow-none"
       }`}
     >
+      {/* Top reading scroll progress bar */}
+      <div
+        className="absolute top-0 left-0 h-[2px] bg-gradient-to-r from-blue-600 via-purple-600 to-teal-600 transition-all duration-75 pointer-events-none"
+        style={{ width: `${scrollProgress}%` }}
+        aria-hidden="true"
+      />
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Left: Brand lockup */}
         <div className="flex items-center gap-3">
@@ -111,7 +143,19 @@ export const LandingNav: React.FC = () => {
         </nav>
 
         {/* Right: Actions */}
-        <div className="hidden sm:flex items-center gap-3">
+        <div className="hidden sm:flex items-center gap-2.5">
+          {/* Quick PyPI Package Link */}
+          <a
+            href="https://pypi.org/project/totem-tool/"
+            target="_blank"
+            rel="noreferrer"
+            className="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono text-neutral-600 hover:text-black border border-transparent hover:border-neutral-300 hover:bg-white rounded-md transition"
+            title="View totem-tool on PyPI"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+            <span>PyPI v0.1.0</span>
+          </a>
+
           {/* Conditional Desktop Installer Download */}
           {desktopDownloadUrl && (
             <a
@@ -183,6 +227,26 @@ export const LandingNav: React.FC = () => {
             ))}
           </nav>
           <div className="pt-3 border-t border-neutral-200 flex flex-col gap-2">
+            <a
+              href="https://pypi.org/project/totem-tool/"
+              target="_blank"
+              rel="noreferrer"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-mono font-medium text-neutral-800 bg-white border border-neutral-300 rounded-md shadow-2xs hover:bg-neutral-50"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+              <span>totem-tool on PyPI</span>
+            </a>
+            {desktopDownloadUrl && (
+              <a
+                href={desktopDownloadUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 text-xs font-mono font-medium text-neutral-800 bg-white border border-neutral-300 rounded-md shadow-2xs hover:bg-neutral-50"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Download Desktop</span>
+              </a>
+            )}
             <a
               href={GITHUB_REPO_URL}
               target="_blank"

@@ -103,8 +103,8 @@ export const ObjectCentricComparison: React.FC = () => {
 
           {/* Graphical Demonstration Surface — Fixed height containers on desktop, flexible on mobile */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-8">
-            {/* Left/Main Visual Diagram: Fixed 340px height */}
-            <div className="lg:col-span-8 bg-white rounded-xl border border-[#E4E4E7] p-3 sm:p-6 shadow-2xs overflow-hidden h-[340px] flex items-center justify-center">
+            {/* Left/Main Visual Diagram: Fixed 340px height on desktop, flexible on mobile */}
+            <div className="lg:col-span-8 bg-white rounded-xl border border-[#E4E4E7] p-3 sm:p-6 shadow-2xs overflow-hidden min-h-[320px] lg:h-[340px] flex items-center justify-center">
               <div key={viewMode} className="w-full h-full flex items-center justify-center tab-content-enter">
                 {viewMode === "flattened" ? (
                   /* Flattened View: Single artificial lane, duplicated events, merged worker confusion */
@@ -236,8 +236,8 @@ export const ObjectCentricComparison: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Explanation Column: Fixed 340px height */}
-            <div className="lg:col-span-4 h-[340px] flex flex-col justify-center space-y-4">
+            {/* Right Explanation Column: Fixed 340px height on desktop, flexible on mobile */}
+            <div className="lg:col-span-4 min-h-[200px] lg:h-[340px] flex flex-col justify-center space-y-4">
               <div key={viewMode} className="tab-content-enter space-y-4">
                 <div className="flex items-center gap-2 text-sm font-semibold text-[#0B0D0F]">
                   {viewMode === "flattened" ? (
