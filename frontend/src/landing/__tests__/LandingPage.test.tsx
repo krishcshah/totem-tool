@@ -298,6 +298,42 @@ describe("LandingPage Component Tests", () => {
     expect(svg.querySelector("#arrow-purple")).toBeTruthy();
     expect(svg.querySelector("#arrow-teal")).toBeTruthy();
   });
+
+  it("renders AI Copilot section with interactive Teach and Act modes", () => {
+    render(
+      <MemoryRouter initialEntries={["/"]}>
+        <LandingPage />
+      </MemoryRouter>
+    );
+
+    // Verify section heading and eyebrow badge
+    expect(
+      screen.getByRole("heading", { level: 2, name: /Process intelligence meets autonomous action\./i })
+    ).toBeTruthy();
+    expect(screen.getByText(/DUAL-MODE AI COPILOT & AGENT BRIDGE/i)).toBeTruthy();
+
+    // Verify default Teach Mode state
+    expect(screen.getByText(/Teach Mode is active:/i)).toBeTruthy();
+    expect(screen.getByText(/Unlike classic Petri nets where tokens are anonymous black dots/i)).toBeTruthy();
+    expect(screen.getByText(/Spotlight Active: Model Discovery Studio/i)).toBeTruthy();
+
+    // Switch to Act Mode
+    const actModeTab = screen.getByRole("tab", { name: /act mode/i });
+    fireEvent.click(actModeTab);
+
+    // Verify Act Mode state and MCP tools
+    expect(screen.getByText(/Act Mode is active:/i)).toBeTruthy();
+    expect(screen.getByText(/MCP Tool Invocation Pipeline/i)).toBeTruthy();
+    expect(screen.getByText(/discover_occn\(dependency_threshold=0.9, noise_tolerance=0.05\)/i)).toBeTruthy();
+
+    // Test Human-in-the-Loop approval
+    const approveBtn = screen.getByRole("button", { name: /approve action/i });
+    expect(approveBtn).toBeTruthy();
+    fireEvent.click(approveBtn);
+
+    expect(screen.getByText(/Approved & Applied/i)).toBeTruthy();
+    expect(screen.getByText(/Dashboard mounted to active workspace/i)).toBeTruthy();
+  });
 });
 
 describe("Routing Integration in App", () => {

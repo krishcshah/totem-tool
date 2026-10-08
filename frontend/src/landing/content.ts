@@ -60,6 +60,7 @@ export const LANDING_NAV_LINKS: NavItem[] = [
   { label: "Why object-centric", href: "#why" },
   { label: "Workflow", href: "#workflow" },
   { label: "Models", href: "#models" },
+  { label: "AI Copilot", href: "#ai-assistant" },
   { label: "Research", href: "#research" },
   { label: "FAQ", href: "#faq" },
 ];
@@ -104,7 +105,7 @@ export const OBJECT_THREADS: ObjectThread[] = [
 export const TRUST_STRIP: TrustBadge[] = [
   { label: "OCEL 2.0", detail: "Native relational standard" },
   { label: "Visual Model Editors", detail: "TOTeM, OCCN, OCPN & OC-DFG" },
-  { label: "Conformance & Playout", detail: "Bounded replay & simulation" },
+  { label: "AI Copilot & MCP", detail: "Dual-mode Teach & Act agent" },
   { label: "MIT Licensed", detail: "Open source & inspectable" },
 ];
 
@@ -277,5 +278,21 @@ export const FAQ_ITEMS: FaqItem[] = [
   {
     question: "Can I use the analysis library without the interface?",
     answer: "Yes. The core algorithms are packaged in a standalone Python library called totem-tool on PyPI. You can install it directly with 'pip install totem-tool' and use it in Python scripts, Jupyter notebooks, or data science pipelines without starting the web application.",
+  },
+  {
+    question: "How does the TOTeM AI Copilot work?",
+    answer: "The TOTeM AI Copilot is an intelligent assistant integrated directly into the analysis workbench. Operating over a real-time WebSocket bridge (/ws/agent/), it maintains context of your active project, viewport, and filters. Powered by the Model Context Protocol (MCP), it can execute domain tools over DuckDB, answer theoretical OCPM questions, and orchestrate workbench actions.",
+  },
+  {
+    question: "What is the difference between Teach Mode and Act Mode?",
+    answer: "Teach Mode is an educational coach that provides mathematically grounded explanations for object-centric process mining concepts (such as Petri net token semantics, C-Net marker bindings, and alignment diagnostics) and drives interactive visual spotlight tours without modifying your data. Act Mode is an autonomous co-pilot equipped with 18 MCP domain tools that can run analytical queries, discover models, and construct analytical dashboards—requiring human-in-the-loop confirmation before applying any mutating action.",
+  },
+  {
+    question: "Is my event log data sent to external AI providers?",
+    answer: "No. TOTeM adopts a strict privacy-first architecture. Raw event log rows, sensitive business attributes, and raw DOM trees are never transmitted to external LLM providers. The copilot receives only structured, high-level JSON context (such as active object types, schema summaries, or aggregated metric counts), ensuring sensitive business data remains private in your local DuckDB instance.",
+  },
+  {
+    question: "Which AI providers and models are supported?",
+    answer: "TOTeM supports a Bring-Your-Own-Key (BYOK) multi-provider architecture with first-class streaming support for Google Gemini (including Gemini 2.5 Flash), OpenAI (including GPT-4o), and Anthropic (including Claude 3.5 Sonnet). Additionally, an offline deterministic MockProvider is included for air-gapped or automated testing environments without external network dependencies.",
   },
 ];

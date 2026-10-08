@@ -8,6 +8,7 @@ import { ProcessAreaStory } from "./components/ProcessAreaStory";
 import { ModelLanguageTabs } from "./components/ModelLanguageTabs";
 import { ConformanceStory } from "./components/ConformanceStory";
 import { WorkbenchMosaic } from "./components/WorkbenchMosaic";
+import { AiAssistantStory } from "./components/AiAssistantStory";
 import { PlayoutStory } from "./components/PlayoutStory";
 import { ResearchSection } from "./components/ResearchSection";
 import { LandingFaq } from "./components/LandingFaq";
@@ -197,16 +198,19 @@ export const LandingPage: React.FC = () => {
         {/* SECTION 8 — WORKBENCH BENTO & DUCKDB SQL */}
         <WorkbenchMosaic />
 
-        {/* SECTION 9 — PLAYOUT SIMULATION */}
+        {/* SECTION 9 — AI COPILOT & AGENT BRIDGE */}
+        <AiAssistantStory />
+
+        {/* SECTION 10 — PLAYOUT SIMULATION */}
         <PlayoutStory />
 
-        {/* SECTION 10 — RESEARCH & CITATIONS */}
+        {/* SECTION 11 — RESEARCH & CITATIONS */}
         <ResearchSection />
 
-        {/* SECTION 11 — FAQ ACCORDION */}
+        {/* SECTION 12 — FAQ ACCORDION */}
         <LandingFaq />
 
-        {/* SECTION 12 & 13 — FINAL CTA & FOOTER */}
+        {/* SECTION 13 & 14 — FINAL CTA & FOOTER */}
         <LandingFooter />
       </main>
 
